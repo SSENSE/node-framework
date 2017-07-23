@@ -4,6 +4,8 @@ declare module 'uuid' {
 
 declare module 'http' {
     export interface IncomingMessage {
+        xRequestId?: string;
+        // logger?: RequestLogger;
         header(name: string): string;
     }
 }
