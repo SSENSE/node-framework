@@ -54,7 +54,6 @@ export class SafeShutdown {
 
                         if (keys.length > 0) {
                             for (const socketId of keys) {
-                                // TODO: check for timeout and force close if too long
                                 if (forceClose || connections[socketId]._isIdle === true) {
                                     connections[socketId].destroy();
                                     delete connections[socketId];
@@ -91,6 +90,6 @@ export class SafeShutdown {
             });
         });
 
-        return <any> server;
+        return <T & SafeShutdownServer> server;
     }
 }

@@ -1,6 +1,3 @@
-// tslint:disable-next-line:no-reference
-/// <reference path="../../overrides.d.ts" />
-
 import { AccessLogger, UserIdCallback } from './AccessLogger';
 import { AppLogger, Logger, LogLevel, RequestLogger } from './AppLogger';
 
