@@ -62,7 +62,8 @@
       "src/**/*.ts"
     ],
     "exclude": [
-      "vendor.d.ts",
+      "internal.d.ts",
+      "typings.d.ts",
       "**/index.ts"
     ],
     "extension": [

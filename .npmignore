@@ -1,7 +1,10 @@
 .nyc_output
+.idea
+.vscode
 src
 tests
 .gitignore
 .travis.yml
 tsconfig.json
 tslint.json
+internal.d.ts
