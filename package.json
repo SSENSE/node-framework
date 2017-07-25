@@ -17,11 +17,19 @@
     "tools",
     "utilities"
   ],
+  "homepage": "https://github.com/Groupe-Atallah/ms-product#readme",
   "author": {
     "name": "Rémy Jeancolas",
     "email": "remy.jeancolas@ssense.com"
   },
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SSENSE/node-framework"
+  },
+  "bugs": {
+    "url": "https://github.com/SSENSE/node-framework/issues"
+  },
   "engines": {
     "node": ">=6.0.0"
   },
