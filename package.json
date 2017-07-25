@@ -3,6 +3,7 @@
   "version": "0.1.1",
   "description": "Base framework regrouping all SSENSE's utilities for Node.js developers",
   "main": "./js",
+  "typings": "./js",
   "scripts": {
     "build": "rm -rf js && tsc",
     "lint": "tslint --type-check --project tsconfig-linter.json -c tslint.json ./src/{,**/}*.ts ./tests/unit/{,**/}*.ts",
@@ -62,9 +63,8 @@
       "src/**/*.ts"
     ],
     "exclude": [
-      "internal.d.ts",
-      "typings.d.ts",
-      "**/index.ts"
+      "**/index.ts",
+      "**/*.d.ts"
     ],
     "extension": [
       ".ts"

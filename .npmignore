@@ -6,5 +6,6 @@ tests
 .gitignore
 .travis.yml
 tsconfig.json
+tsconfig-linter.json
 tslint.json
 internal.d.ts
