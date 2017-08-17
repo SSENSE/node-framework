@@ -20,6 +20,7 @@ export interface Logger {
     info(message: string, id?: string, tags?: string[], details?: any): void;
     warn(message: string, id?: string, tags?: string[], details?: any): void;
     error(message: string, id?: string, tags?: string[], details?: any): void;
+    getRequestLogger(requestId: string): RequestLogger;
 }
 export interface RequestLogger {
     silly(message: string, tags?: string[], details?: any): void;

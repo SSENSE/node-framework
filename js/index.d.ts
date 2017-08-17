@@ -1,4 +1,5 @@
 /// <reference path="../overrides.d.ts" />
-import * as logger from './logger';
-import * as http from './http';
-export { logger, http };
+import { AccessLogger, UserIdCallback } from './logger/AccessLogger';
+import { AppLogger, Logger, LogLevel, RequestLogger } from './logger/AppLogger';
+import { SafeShutdown } from './http/SafeShutdown';
+export { AccessLogger, UserIdCallback, AppLogger, Logger, LogLevel, RequestLogger, SafeShutdown };

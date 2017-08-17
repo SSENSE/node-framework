@@ -1,9 +1,14 @@
 // tslint:disable-next-line:no-reference
 /// <reference path="../overrides.d.ts" />
 
-import * as logger from './logger';
-import * as http from './http';
+// Logger
+import { AccessLogger, UserIdCallback } from './logger/AccessLogger';
+import { AppLogger, Logger, LogLevel, RequestLogger } from './logger/AppLogger';
+
+// HTTP
+import { SafeShutdown } from './http/SafeShutdown';
 
 export {
-    logger, http
+    AccessLogger, UserIdCallback, AppLogger, Logger, LogLevel, RequestLogger,
+    SafeShutdown
 };
