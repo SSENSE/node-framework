@@ -89,7 +89,6 @@ export declare class SafeShutdown {
 // Augmentations //
 ///////////////////
 
-
 // HTTP module override
 declare module 'http' {
     export interface IncomingMessage {
