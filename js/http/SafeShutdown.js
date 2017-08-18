@@ -4,7 +4,9 @@ class SafeShutdown {
     static server(server) {
         let connectionsCount = 0;
         const connections = {};
+        server.isShuttingDown = false;
         server.safeShutdown = (timeout) => {
+            server.isShuttingDown = true;
             return new Promise((resolve, reject) => {
                 let forceClose = false;
                 let forceTimeout = null;

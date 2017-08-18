@@ -3,6 +3,7 @@ import Timer = NodeJS.Timer;
 import { Socket } from 'net';
 
 export interface SafeShutdownServer {
+    readonly isShuttingDown: boolean;
     safeShutdown(timeout?: number): Promise<void>;
 }
 
@@ -20,7 +21,9 @@ export class SafeShutdown {
         const connections: {[id: number]: CustomSocket} = {};
 
         // Augment originalServer
+        (<any> server).isShuttingDown = false;
         (<any> server).safeShutdown = (timeout?: number) => {
+            (<any> server).isShuttingDown = true;
             return new Promise<void>((resolve, reject) => {
                 let forceClose = false;
                 let forceTimeout: Timer = null;

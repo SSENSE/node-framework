@@ -20,6 +20,12 @@ describe('SafeShutdown', () => {
             expect(typeof server.safeShutdown).to.equal('function');
         });
 
+        it('should add an extra "isShuttingDown" property on existing server', () => {
+            const server = SafeShutdown.server(<any> {on: sandbox.spy()});
+            expect(server).to.haveOwnProperty('isShuttingDown');
+            expect(server.isShuttingDown).to.equal(false, 'Server should not be shutting down by default');
+        });
+
         it('should listen for client connections and store reference to them', () => {
             const onEventStub = sandbox.stub();
             SafeShutdown.server(<any> { on: onEventStub });

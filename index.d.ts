@@ -82,6 +82,7 @@ export class AppLogger implements Logger {
 // HTTP utils //
 ////////////////
 export interface SafeShutdownServer {
+    readonly isShuttingDown: boolean;
     safeShutdown(timeout?: number): Promise<void>;
 }
 export declare class SafeShutdown {
