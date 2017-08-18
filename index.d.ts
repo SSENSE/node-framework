@@ -1,5 +1,8 @@
 /// <reference types="node" />
+/// <reference types="mongoose" />
+/// <reference types="mongoose-paginate" />
 import { Server, IncomingMessage, ServerResponse } from 'http';
+import { Document as MongooseDocument, Schema as MongooseSchema, PaginateModel as MongoosePaginateModel } from 'mongoose';
 
 //////////////////
 // Logger utils //
@@ -83,6 +86,30 @@ export interface SafeShutdownServer {
 }
 export declare class SafeShutdown {
     static server<T extends Server>(server: T): T & SafeShutdownServer;
+}
+
+///////////////////
+// MongoDb utils //
+///////////////////
+export interface MongoConnectionOptions {
+    database: string;
+    connectionString: string;
+    shardedCluster: boolean;
+    readPreference: string;
+    replicaSetName: string;
+    username: string;
+    password: string;
+    debug: boolean;
+}
+
+export class MongoConnection {
+    protected database: string;
+    protected options: any;
+
+    constructor(options: MongoConnectionOptions);
+    public connect(): Promise<void>;
+    public disconnect(): Promise<void>;
+    public getModel<T extends MongooseDocument>(name: string, schema: MongooseSchema, increment?: boolean): Promise<MongoosePaginateModel<T>>;
 }
 
 ///////////////////
