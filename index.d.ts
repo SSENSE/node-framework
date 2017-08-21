@@ -81,12 +81,10 @@ export class AppLogger implements Logger {
 ////////////////
 // HTTP utils //
 ////////////////
-export interface SafeShutdownServer {
-    readonly isShuttingDown: boolean;
-    safeShutdown(timeout?: number): Promise<void>;
-}
-export declare class SafeShutdown {
-    static server<T extends Server>(server: T): T & SafeShutdownServer;
+export abstract class SafeShutdownServer {
+    public readonly isShuttingDown: boolean;
+    public safeShutdown(timeout?: number): Promise<void>;
+    public static create<T extends Server>(server: T): T & SafeShutdownServer;
 }
 
 ///////////////////
