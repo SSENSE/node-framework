@@ -8,8 +8,13 @@ import { SafeShutdownServer } from './http/SafeShutdownServer';
 // MongoDb
 import { Connection as MongoConnection, ConnectionOptions as MongoConnectionOptions } from './mongo/Connection';
 
+// Cache / Redis
+import { Cache } from './cache/Cache';
+import { Redis as RedisConnection, ConnectionOptions as RedisConnectionOptions } from './cache/Redis';
+
 export {
     AccessLogger, UserIdCallback, AppLogger, Logger, LogLevel, RequestLogger,
     SafeShutdownServer,
-    MongoConnection, MongoConnectionOptions
+    MongoConnection, MongoConnectionOptions,
+    Cache, RedisConnection, RedisConnectionOptions
 };

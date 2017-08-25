@@ -111,6 +111,39 @@ export class MongoConnection {
     public getModel<T extends MongooseDocument>(name: string, schema: MongooseSchema, increment?: boolean): Promise<MongoosePaginateModel<T>>;
 }
 
+/////////////////
+// Cache utils //
+/////////////////
+export interface Cache {
+    get<T>(key: string|string[]): Promise<T>;
+    getTtl(key: string|string[]): Promise<number>;
+    set<T>(key: string|string[], value: T, ttl?: number): Promise<void>;
+    del(key: string): Promise<void>;
+    flush(): Promise<void>;
+}
+
+export interface RedisConnectionOptions {
+    host: string;
+    port?: number;
+    db?: number;
+    password?: string;
+    separator?: string;
+}
+
+export class RedisConnection implements Cache {
+    protected getKey(parts: string|string[]): string;
+
+    constructor(connection: RedisConnectionOptions);
+    public onError(callback: (err: Error) => any): void;
+    public getSeparator(): string;
+    public setSeparator(separator: string): void;
+    public get<T>(key: string|string[]): Promise<T>;
+    public getTtl(key: string|string[]): Promise<number>;
+    public set<T>(key: string|string[], value: T, ttl?: number): Promise<void>;
+    public del(key: string|string[]): Promise<void>;
+    public flush(): Promise<void>;
+}
+
 ///////////////////
 // Augmentations //
 ///////////////////

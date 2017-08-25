@@ -9,4 +9,6 @@ const SafeShutdownServer_1 = require("./http/SafeShutdownServer");
 exports.SafeShutdownServer = SafeShutdownServer_1.SafeShutdownServer;
 const Connection_1 = require("./mongo/Connection");
 exports.MongoConnection = Connection_1.Connection;
+const Redis_1 = require("./cache/Redis");
+exports.RedisConnection = Redis_1.Redis;
 //# sourceMappingURL=index.js.map
