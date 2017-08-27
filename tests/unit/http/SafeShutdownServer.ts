@@ -69,27 +69,27 @@ describe('SafeShutdownServer', () => {
             }, 'Socket should be idle');
         });
 
-        // it('should safe shutdown server', (done: Function) => {
-        //     const clock = sandbox.useFakeTimers(Date.now());
-        //     let closeServerCallback: Function = null;
-        //     let server: any = {
-        //         on: sandbox.spy(),
-        //         close: ((callback: () => void) => {
-        //             closeServerCallback = callback;
-        //         })
-        //     };
-        //     server = SafeShutdown.server(server);
-        //     const socket: any = {on: () => {}, destroy: () => {}};
-        //     server.on.firstCall.args[1](socket);
-        //     clock.tick(260);
-        //     server.safeShutdown().then(() => {
-        //         done();
-        //     }).catch((e: Error) => done(e));
-        //     clock.tick(260);
-        //     server.on.secondCall.args[1]({socket}, {on: () => {}});
-        //
-        //     clock.tick(500);
-        //     closeServerCallback();
-        // });
+        it('should safe shutdown server', (done: Function) => {
+            const clock = sandbox.useFakeTimers(Date.now());
+            let closeServerCallback: Function = null;
+            let server: any = {
+                on: sandbox.spy(),
+                close: ((callback: () => void) => {
+                    closeServerCallback = callback;
+                })
+            };
+            server = SafeShutdownServer.create(server);
+            const socket: any = {on: () => {}, destroy: () => {}}; // tslint:disable-line:no-empty
+            server.on.firstCall.args[1](socket);
+            clock.tick(260);
+            server.safeShutdown().then(() => {
+                done();
+            }).catch((e: Error) => done(e));
+            clock.tick(260);
+            server.on.secondCall.args[1]({socket}, {on: () => {}}); // tslint:disable-line:no-empty
+
+            clock.tick(500);
+            closeServerCallback();
+        });
     });
 });
