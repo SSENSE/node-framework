@@ -20,11 +20,23 @@ describe('Redis', () => {
             let cache = new Redis({host: 'foo'});
             expect(cache.getSeparator()).to.equal(':');
 
-            cache = new Redis({host: 'foo', separator: '    ', password: 'baz'});
+            cache = new Redis({host: 'foo', port: 1234, separator: '    ', password: 'baz'});
             expect(cache.getSeparator()).to.equal(':');
 
-            cache = new Redis({host: 'foo', separator: 'bar'});
+            cache = new Redis({host: 'foo', db: 5, separator: 'bar'});
             expect(cache.getSeparator()).to.equal('bar');
+        });
+    });
+
+    describe('onError()', () => {
+        it('should call specified callback on client error', () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const cache = new Redis({host: 'foo'});
+            (<any> cache).client = {on: (event: string, cb: Function) => cb()};
+            const callback = sandbox.stub();
+            expect(callback.callCount).to.equal(0);
+            cache.onError(callback);
+            expect(callback.callCount).to.equal(1);
         });
     });
 

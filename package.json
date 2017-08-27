@@ -72,7 +72,8 @@
     ],
     "exclude": [
       "**/index.ts",
-      "**/*.d.ts"
+      "**/*.d.ts",
+      "src/cache/Cache.ts"
     ],
     "extension": [
       ".ts"
