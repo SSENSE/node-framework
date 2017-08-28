@@ -12,9 +12,13 @@ import { Connection as MongoConnection, ConnectionOptions as MongoConnectionOpti
 import { Cache } from './cache/Cache';
 import { Redis as RedisConnection, ConnectionOptions as RedisConnectionOptions } from './cache/Redis';
 
+// Pubsub
+import { Emitter as PubsubEmitter, EmitterOptions as PubsubEmitterOptions } from './pubsub/Emitter';
+
 export {
     AccessLogger, UserIdCallback, AppLogger, Logger, LogLevel, RequestLogger,
     SafeShutdownServer,
     MongoConnection, MongoConnectionOptions,
-    Cache, RedisConnection, RedisConnectionOptions
+    Cache, RedisConnection, RedisConnectionOptions,
+    PubsubEmitter, PubsubEmitterOptions
 };

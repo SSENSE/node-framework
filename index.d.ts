@@ -144,6 +144,32 @@ export class RedisConnection implements Cache {
     public flush(): Promise<void>;
 }
 
+//////////////////
+// Pubsub utils //
+//////////////////
+export interface PubsubEmitterOptions {
+    host: string;
+    accessToken: string;
+    userAgent: string;
+    port?: number;
+    secure?: boolean;
+    timeout?: number;
+    debug?: boolean;
+}
+
+export class PubsubEmitter {
+    protected host: string;
+    protected accessToken: string;
+    protected userAgent: string;
+    protected port: number;
+    protected secure: boolean;
+    protected timeout: number;
+    protected debug: boolean;
+
+    constructor(options: PubsubEmitterOptions);
+    public emit(topic: string, data: any): Promise<string>;
+}
+
 ///////////////////
 // Augmentations //
 ///////////////////

@@ -11,4 +11,6 @@ const Connection_1 = require("./mongo/Connection");
 exports.MongoConnection = Connection_1.Connection;
 const Redis_1 = require("./cache/Redis");
 exports.RedisConnection = Redis_1.Redis;
+const Emitter_1 = require("./pubsub/Emitter");
+exports.PubsubEmitter = Emitter_1.Emitter;
 //# sourceMappingURL=index.js.map
