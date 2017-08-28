@@ -57,7 +57,7 @@ describe('MongoConnection', () => {
             );
         });
 
-        it('should set appropriate mongos option if shardedCluster param is true', () => {
+        it('should set appropriate ssl options if shardedCluster param is true', () => {
             const params: ConnectionOptions = {
                 database: 'foo',
                 connectionString: 'bar',
@@ -70,11 +70,37 @@ describe('MongoConnection', () => {
             };
 
             const connection1 = new MongoChild(params);
-            expect(connection1.getOptions()).to.not.haveOwnProperty('mongos');
+            expect(connection1.getOptions()).to.not.haveOwnProperty('ssl');
 
             params.shardedCluster = true;
             const connection2 = new MongoChild(params);
-            expect(connection2.getOptions()).to.haveOwnProperty('mongos');
+            expect(connection2.getOptions()).to.haveOwnProperty('ssl');
+        });
+
+        it('should add credentials in connection string if needed', async () => {
+            const mongooseConnectStub = sandbox.stub(mongoose, 'connect');
+            const params: ConnectionOptions = {
+                database: 'foo',
+                connectionString: 'bar',
+                shardedCluster: false,
+                readPreference: null,
+                replicaSetName: null,
+                username: null,
+                password: null,
+                debug: true
+            };
+
+            const connection1 = new MongoConnection(params);
+            await connection1.connect();
+            expect(mongooseConnectStub.callCount).to.equal(1);
+            expect(mongooseConnectStub.lastCall.args[0]).to.not.contain('@');
+
+            params.username = 'foobar';
+            params.password = 'baz';
+            const connection2 = new MongoConnection(params);
+            await connection2.connect();
+            expect(mongooseConnectStub.callCount).to.equal(2);
+            expect(mongooseConnectStub.lastCall.args[0]).to.contain('foobar:baz@');
         });
 
         it('should add replicaset name in connection string if needed', async () => {

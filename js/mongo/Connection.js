@@ -26,18 +26,16 @@ class Connection {
             throw new Error(`Connection readPreference must be one of ${this.allowedReadPreferences.join(', ')}`);
         }
         this.options = {
-            user: options.username,
-            pass: options.password,
-            db: { readPreference }
+            readPreference,
+            useMongoClient: true
         };
+        const credentials = options.username && options.password ? `${options.username}:${options.password}@` : '';
         if (options.shardedCluster === true) {
-            this.options.mongos = {
-                ssl: false,
-                sslValidate: false
-            };
+            this.options.ssl = false;
+            this.options.sslValidate = false;
         }
         const replicaSet = options.replicaSetName && options.replicaSetName.length > 0 ? `?replicaSet=${options.replicaSetName}` : '';
-        this.connectionString = `mongodb://${options.connectionString}/${options.database}${replicaSet}`;
+        this.connectionString = `mongodb://${credentials}${options.connectionString}/${options.database}${replicaSet}`;
     }
     connect() {
         return __awaiter(this, void 0, void 0, function* () {
