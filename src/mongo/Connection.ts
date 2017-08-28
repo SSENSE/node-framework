@@ -5,12 +5,12 @@ import * as mongooseIncrement from 'mongoose-auto-increment';
 export interface ConnectionOptions {
     database: string;
     connectionString: string;
-    shardedCluster: boolean;
-    readPreference: string;
-    replicaSetName: string;
-    username: string;
-    password: string;
-    debug: boolean;
+    shardedCluster?: boolean;
+    readPreference?: string;
+    replicaSetName?: string;
+    username?: string;
+    password?: string;
+    debug?: boolean;
 }
 
 export class Connection {
@@ -25,9 +25,15 @@ export class Connection {
     protected options: any;
 
     constructor(options: ConnectionOptions) {
+        if (!options || !options.database || typeof options.database !== 'string' || options.database.trim() === '') {
+            throw new Error('options.database is required');
+        } else if (!options.connectionString || typeof options.connectionString !== 'string' || options.connectionString.trim() === '') {
+            throw new Error('options.connectionString is required');
+        }
+
         (<any> mongoose).Promise = global.Promise;
-        mongoose.set('debug', options.debug);
-        this.database = options.database;
+        this.database = options.database.trim();
+        mongoose.set('debug', typeof options.debug === 'boolean' ? options.debug : false);
 
         const readPreference = options.readPreference || 'secondaryPreferred'; // Read from secondary server(s) by default
         if (this.allowedReadPreferences.indexOf(readPreference) < 0) {
@@ -45,9 +51,10 @@ export class Connection {
             this.options.sslValidate = false;
         }
 
-        const replicaSet = options.replicaSetName && options.replicaSetName.length > 0 ? `?replicaSet=${options.replicaSetName}` : '';
+        const replicaSet = options.replicaSetName && typeof options.replicaSetName === 'string' && options.replicaSetName.trim() !== ''
+            ? `?replicaSet=${options.replicaSetName.trim()}` : '';
 
-        this.connectionString = `mongodb://${credentials}${options.connectionString}/${options.database}${replicaSet}`;
+        this.connectionString = `mongodb://${credentials}${options.connectionString}/${this.database}${replicaSet}`;
     }
 
     public async connect(): Promise<void> {

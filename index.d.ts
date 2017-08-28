@@ -93,12 +93,12 @@ export abstract class SafeShutdownServer {
 export interface MongoConnectionOptions {
     database: string;
     connectionString: string;
-    shardedCluster: boolean;
-    readPreference: string;
-    replicaSetName: string;
-    username: string;
-    password: string;
-    debug: boolean;
+    shardedCluster?: boolean;
+    readPreference?: string;
+    replicaSetName?: string;
+    username?: string;
+    password?: string;
+    debug?: boolean;
 }
 
 export class MongoConnection {

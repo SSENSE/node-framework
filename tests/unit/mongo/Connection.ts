@@ -27,11 +27,6 @@ describe('MongoConnection', () => {
             const params: ConnectionOptions = {
                 database: 'foo',
                 connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
                 debug: true
             };
             // tslint:disable-next-line:no-unused-variable
@@ -40,16 +35,43 @@ describe('MongoConnection', () => {
             expect(mongooseSetStub.lastCall.args).to.deep.equal(['debug', true], 'Debug sould be true');
         });
 
+        it('should set debug mode to false by default', () => {
+            const mongooseSetStub = sandbox.stub(mongoose, 'set');
+            const params: ConnectionOptions = {
+                database: 'foo',
+                connectionString: 'bar'
+            };
+            // tslint:disable-next-line:no-unused-variable
+            const connection = new MongoConnection(params);
+            expect(mongooseSetStub.callCount).to.equal(1);
+            expect(mongooseSetStub.lastCall.args).to.deep.equal(['debug', false], 'Debug sould be false');
+        });
+
+        it('should throw an error if options.database is invalid', () => {
+            expect(() => new MongoConnection(null)).to.throw(
+                'options.database is required'
+            );
+
+            expect(() => new MongoConnection(<any> {database: '     '})).to.throw(
+                'options.database is required'
+            );
+        });
+
+        it('should throw an error if options.connectionString is invalid', () => {
+            expect(() => new MongoConnection(<any> {database: 'foo'})).to.throw(
+                'options.connectionString is required'
+            );
+
+            expect(() => new MongoConnection({database: 'foo', connectionString: '    '})).to.throw(
+                'options.connectionString is required'
+            );
+        });
+
         it('should throw an error if readPreference param is invalid', () => {
             const params: ConnectionOptions = {
                 database: 'foo',
                 connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: 'baz',
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                readPreference: 'baz'
             };
 
             expect(() => new MongoConnection(params)).to.throw(
@@ -61,12 +83,7 @@ describe('MongoConnection', () => {
             const params: ConnectionOptions = {
                 database: 'foo',
                 connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                shardedCluster: false
             };
 
             const connection1 = new MongoChild(params);
@@ -81,13 +98,7 @@ describe('MongoConnection', () => {
             const mongooseConnectStub = sandbox.stub(mongoose, 'connect');
             const params: ConnectionOptions = {
                 database: 'foo',
-                connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                connectionString: 'bar'
             };
 
             const connection1 = new MongoConnection(params);
@@ -107,13 +118,7 @@ describe('MongoConnection', () => {
             const mongooseConnectStub = sandbox.stub(mongoose, 'connect');
             const params: ConnectionOptions = {
                 database: 'foo',
-                connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                connectionString: 'bar'
             };
 
             const connection1 = new MongoConnection(params);
@@ -134,13 +139,7 @@ describe('MongoConnection', () => {
             const mongooseConnectStub = sandbox.stub(mongoose, 'connect');
             const params: ConnectionOptions = {
                 database: 'foo',
-                connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                connectionString: 'bar'
             };
 
             const connection = new MongoConnection(params);
@@ -152,13 +151,7 @@ describe('MongoConnection', () => {
             const mongooseConnectStub = sandbox.stub(mongoose, 'connect');
             const params: ConnectionOptions = {
                 database: 'foo',
-                connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                connectionString: 'bar'
             };
 
             const connection = new MongoConnection(params);
@@ -174,13 +167,7 @@ describe('MongoConnection', () => {
             const mongooseDisconnectStub = sandbox.stub(mongoose, 'disconnect');
             const params: ConnectionOptions = {
                 database: 'foo',
-                connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                connectionString: 'bar'
             };
 
             let error: string = null;
@@ -202,13 +189,7 @@ describe('MongoConnection', () => {
             const mongooseDisconnectStub = sandbox.stub(mongoose, 'disconnect');
             const params: ConnectionOptions = {
                 database: 'foo',
-                connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                connectionString: 'bar'
             };
 
             const connection = new MongoConnection(params);
@@ -221,13 +202,7 @@ describe('MongoConnection', () => {
             const mongooseDisconnectStub = sandbox.stub(mongoose, 'disconnect');
             const params: ConnectionOptions = {
                 database: 'foo',
-                connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                connectionString: 'bar'
             };
 
             const connection = new MongoConnection(params);
@@ -243,13 +218,7 @@ describe('MongoConnection', () => {
             const schema: any = { plugin: sandbox.stub() };
             const params: ConnectionOptions = {
                 database: 'foo',
-                connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                connectionString: 'bar'
             };
             const connection = new MongoConnection(params);
             await connection.getModel('foo', schema, false);
@@ -270,13 +239,7 @@ describe('MongoConnection', () => {
             const schema: any = { plugin: sandbox.stub() };
             const params: ConnectionOptions = {
                 database: 'foo',
-                connectionString: 'bar',
-                shardedCluster: false,
-                readPreference: null,
-                replicaSetName: null,
-                username: null,
-                password: null,
-                debug: true
+                connectionString: 'bar'
             };
             const connection = new MongoConnection(params);
             await connection.getModel('foo', schema);
