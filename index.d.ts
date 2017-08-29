@@ -94,7 +94,7 @@ export interface MongoConnectionOptions {
     database: string;
     connectionString: string;
     shardedCluster?: boolean;
-    readPreference?: string;
+    readPreference?: 'primary'|'primaryPreferred'|'secondary'|'secondaryPreferred'|'nearest';
     replicaSetName?: string;
     username?: string;
     password?: string;

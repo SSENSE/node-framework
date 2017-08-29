@@ -27,7 +27,7 @@ class Connection {
         mongoose.Promise = global.Promise;
         this.database = options.database.trim();
         mongoose.set('debug', typeof options.debug === 'boolean' ? options.debug : false);
-        const readPreference = options.readPreference || 'secondaryPreferred';
+        const readPreference = options.readPreference || 'primary';
         if (this.allowedReadPreferences.indexOf(readPreference) < 0) {
             throw new Error(`Connection readPreference must be one of ${this.allowedReadPreferences.join(', ')}`);
         }

@@ -68,7 +68,7 @@ describe('MongoConnection', () => {
         });
 
         it('should throw an error if readPreference param is invalid', () => {
-            const params: ConnectionOptions = {
+            const params: any = {
                 database: 'foo',
                 connectionString: 'bar',
                 readPreference: 'baz'
@@ -77,6 +77,18 @@ describe('MongoConnection', () => {
             expect(() => new MongoConnection(params)).to.throw(
                 'Connection readPreference must be one of primary, primaryPreferred, secondary, secondaryPreferred, nearest'
             );
+        });
+
+        it('should read from primary server by default', async () => {
+            const params: ConnectionOptions = {
+                database: 'foo',
+                connectionString: 'bar'
+            };
+            const mongooseConnectStub = sandbox.stub(mongoose, 'connect');
+            const connection = new MongoConnection(params);
+            await connection.connect();
+            expect(mongooseConnectStub.callCount).to.equal(1);
+            expect(mongooseConnectStub.lastCall.args[1].readPreference).to.equal('primary');
         });
 
         it('should set appropriate ssl options if shardedCluster param is true', () => {

@@ -6,7 +6,7 @@ export interface ConnectionOptions {
     database: string;
     connectionString: string;
     shardedCluster?: boolean;
-    readPreference?: string;
+    readPreference?: 'primary'|'primaryPreferred'|'secondary'|'secondaryPreferred'|'nearest';
     replicaSetName?: string;
     username?: string;
     password?: string;
@@ -35,7 +35,7 @@ export class Connection {
         this.database = options.database.trim();
         mongoose.set('debug', typeof options.debug === 'boolean' ? options.debug : false);
 
-        const readPreference = options.readPreference || 'secondaryPreferred'; // Read from secondary server(s) by default
+        const readPreference = options.readPreference || 'primary'; // Read from primary server by default
         if (this.allowedReadPreferences.indexOf(readPreference) < 0) {
             throw new Error(`Connection readPreference must be one of ${this.allowedReadPreferences.join(', ')}`);
         }
