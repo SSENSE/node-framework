@@ -77,7 +77,8 @@
     "exclude": [
       "**/index.ts",
       "**/*.d.ts",
-      "src/cache/Cache.ts"
+      "src/cache/Cache.ts",
+      "src/pubsub/parser/Provider.ts"
     ],
     "extension": [
       ".ts"

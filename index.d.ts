@@ -170,6 +170,24 @@ export class PubsubEmitter {
     public emit(topic: string, data: any): Promise<string>;
 }
 
+export interface PubsubMessage {
+    provider: string;
+    id: string;
+    topic: string;
+    date: Date;
+    data: any;
+    isSubscription: boolean;
+    isUnsubscription: boolean;
+
+    subscribeToTopic(): Promise<void>;
+    unsubscribeFromTopic(): Promise<void>;
+}
+
+export class PubsubParser {
+    public setMessageParseFunction(func: (message: string) => string): void;
+    public parse(message: any): Promise<PubsubMessage>;
+}
+
 ///////////////////
 // Augmentations //
 ///////////////////

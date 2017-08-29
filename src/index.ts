@@ -14,11 +14,13 @@ import { Redis as RedisConnection, ConnectionOptions as RedisConnectionOptions }
 
 // Pubsub
 import { Emitter as PubsubEmitter, EmitterOptions as PubsubEmitterOptions } from './pubsub/Emitter';
+import { Parser as PubsubParser } from './pubsub/parser/Parser';
+import { Message as PubsubMessage } from './pubsub/parser/Message';
 
 export {
     AccessLogger, UserIdCallback, AppLogger, Logger, LogLevel, RequestLogger,
     SafeShutdownServer,
     MongoConnection, MongoConnectionOptions,
     Cache, RedisConnection, RedisConnectionOptions,
-    PubsubEmitter, PubsubEmitterOptions
+    PubsubEmitter, PubsubEmitterOptions, PubsubParser, PubsubMessage
 };
