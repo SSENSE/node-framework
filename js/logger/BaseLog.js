@@ -6,7 +6,7 @@ class BaseLog {
         this.app = appId;
         this.env = this.getStandardEnv();
         this.service = 'node';
-        this.date = moment().format('DD/MMM/YYYY:HH:mm:ss ZZ');
+        this.date = moment().format('DD/MMM/YYYY:HH:mm:ss.SSS ZZ');
     }
     getStandardEnv() {
         if (!BaseLog.standardEnv) {
