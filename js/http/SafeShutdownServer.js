@@ -15,9 +15,7 @@ class SafeShutdownServer {
                     if (forceTimeout) {
                         clearTimeout(forceTimeout);
                     }
-                    if (cleanInterval) {
-                        clearInterval(cleanInterval);
-                    }
+                    clearInterval(cleanInterval);
                 }
                 try {
                     server.close(() => {
