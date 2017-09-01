@@ -191,7 +191,7 @@ export class PubsubParser {
 //////////////////////
 // Exceptions utils //
 //////////////////////
-export abstract class Exception extends Error {
+export class Exception extends Error {
     public readonly statusCode: number;
     public readonly code: string;
     public readonly details?: any;
