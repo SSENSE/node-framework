@@ -17,10 +17,23 @@ import { Emitter as PubsubEmitter, EmitterOptions as PubsubEmitterOptions } from
 import { Parser as PubsubParser } from './pubsub/parser/Parser';
 import { Message as PubsubMessage } from './pubsub/parser/Message';
 
+// Exceptions
+import { Base as Exception } from './exceptions/Base';
+import { BadRequestException, ConflictException, ForbiddenException, MethodNotAllowedException, NotFoundException,
+    TooManyRequestsException, UnauthorizedException } from './exceptions/Exceptions';
+
 export {
+    // Logger
     AccessLogger, UserIdCallback, AppLogger, Logger, LogLevel, RequestLogger,
+    // HTTP
     SafeShutdownServer,
+    // MongoDB
     MongoConnection, MongoConnectionOptions,
+    // Cache / Redis
     Cache, RedisConnection, RedisConnectionOptions,
-    PubsubEmitter, PubsubEmitterOptions, PubsubParser, PubsubMessage
+    // Pubsub
+    PubsubEmitter, PubsubEmitterOptions, PubsubParser, PubsubMessage,
+    // Exceptions
+    Exception, BadRequestException, ConflictException, ForbiddenException, MethodNotAllowedException, NotFoundException,
+    TooManyRequestsException, UnauthorizedException
 };

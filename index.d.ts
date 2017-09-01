@@ -188,6 +188,26 @@ export class PubsubParser {
     public parse(message: any): Promise<PubsubMessage>;
 }
 
+//////////////////////
+// Exceptions utils //
+//////////////////////
+export abstract class Exception extends Error {
+    public readonly statusCode: number;
+    public readonly code: string;
+    public readonly details?: any;
+    public readonly body: {code: string, message: string, details?: any};
+
+    constructor(message: string, code?: string, details?: any);
+}
+
+export class BadRequestException extends Exception {}
+export class UnauthorizedException extends Exception {}
+export class ForbiddenException extends Exception {}
+export class NotFoundException extends Exception {}
+export class MethodNotAllowedException extends Exception {}
+export class ConflictException extends Exception {}
+export class TooManyRequestsException extends Exception {}
+
 ///////////////////
 // Augmentations //
 ///////////////////
