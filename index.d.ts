@@ -198,6 +198,8 @@ export class Exception extends Error {
     public readonly body: {code: string, message: string, details?: any};
 
     constructor(message: string, code?: string, details?: any);
+
+    public static fromHttpCode(httpCode: number, message: string, code?: string, details?: any): Exception;
 }
 
 export class BadRequestException extends Exception {}

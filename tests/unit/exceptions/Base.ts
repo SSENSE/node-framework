@@ -1,34 +1,69 @@
 import { expect } from 'chai';
+import * as sinon from 'sinon';
 import { Base } from '../../../src/exceptions/Base';
 import { BadRequestException, ConflictException, ForbiddenException, MethodNotAllowedException, NotFoundException,
     TooManyRequestsException, UnauthorizedException } from '../../../src/exceptions/Exceptions';
 
-describe('Exceptions', () => {
-    describe('Exception', () => {
-        it('should have default statusCode and code', () => {
-            const exception = new Base('foo');
-            expect(exception.statusCode).to.equal(500);
-            expect(exception.code).to.equal('InternalError');
-        });
+let sandbox: sinon.SinonSandbox;
 
-        it('should return json object when getting body', () => {
-            const exception = new Base('foo', 'bar');
-            expect(exception.statusCode).to.equal(500);
-            expect(exception.body).to.deep.equal({
-                code: 'bar',
-                message: 'foo'
+describe('Exceptions', () => {
+    before(() => {
+        sandbox = sinon.sandbox.create();
+    });
+
+    afterEach(() => {
+        sandbox.restore();
+    });
+
+    describe('Exception', () => {
+        describe('constructor()', () => {
+            it('should have default statusCode and code', () => {
+                const exception = new Base('foo');
+                expect(exception.statusCode).to.equal(500);
+                expect(exception.code).to.equal('InternalError');
+            });
+
+            it('should return json object when getting body', () => {
+                const exception = new Base('foo', 'bar');
+                expect(exception.statusCode).to.equal(500);
+                expect(exception.body).to.deep.equal({
+                    code: 'bar',
+                    message: 'foo'
+                });
+            });
+
+            it('should return specific details in body if existing', () => {
+                const exception = new Base('foo', 'bar', {foo: 'bar'});
+                expect(exception.statusCode).to.equal(500);
+                expect(exception.body).to.deep.equal({
+                    code: 'bar',
+                    message: 'foo',
+                    details: {
+                        foo: 'bar'
+                    }
+                });
+            });
+
+            it('should compute body on the flight and do it once', () => {
+                const spy = sandbox.spy(Object, 'assign');
+                const exception = new Base('foo', 'bar', {foo: 'bar'});
+                expect(exception.body).to.be.an('object');
+                expect(spy.callCount).to.equal(1);
+                expect(exception.body).to.be.an('object');
+                expect(spy.callCount).to.equal(1);
             });
         });
 
-        it('should return specific details in body if existing', () => {
-            const exception = new Base('foo', 'bar', {foo: 'bar'});
-            expect(exception.statusCode).to.equal(500);
-            expect(exception.body).to.deep.equal({
-                code: 'bar',
-                message: 'foo',
-                details: {
-                    foo: 'bar'
-                }
+        describe('fromHttpCode()', () => {
+            it('should create a base Exception from HTTP code', () => {
+                const exception = Base.fromHttpCode(900, 'baz', null, {bar: 'foo'});
+                expect(exception).to.be.an.instanceOf(Base);
+            });
+
+            it('should have default statusCode and code', () => {
+                const exception = Base.fromHttpCode(null, 'baz', null, {bar: 'foo'});
+                expect(exception.statusCode).to.equal(500);
+                expect(exception.code).to.equal('InternalError');
             });
         });
     });
