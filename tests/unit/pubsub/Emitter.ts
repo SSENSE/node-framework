@@ -9,6 +9,7 @@ interface ChildData {
     port: number;
     secure: boolean;
     timeout: number;
+    async: boolean;
     debug: boolean;
 }
 
@@ -21,6 +22,7 @@ class EmitterChild extends Emitter {
             port: this.port,
             secure: this.secure,
             timeout: this.timeout,
+            async: this.async,
             debug: this.debug
         };
     }
@@ -55,6 +57,7 @@ describe('PubsubEmitter', () => {
                 port: 80,
                 secure: false,
                 timeout: 5000,
+                async: false,
                 debug: false
             }, 'Params should be as expected');
         });
@@ -67,6 +70,7 @@ describe('PubsubEmitter', () => {
                 port: 444,
                 secure: true,
                 timeout: 2500,
+                async: true,
                 debug: true
             };
             const emitter = new EmitterChild(params);
@@ -77,6 +81,7 @@ describe('PubsubEmitter', () => {
                 port: 444,
                 secure: true,
                 timeout: 2500,
+                async: true,
                 debug: true
             }, 'Params should be as expected');
         });
@@ -108,7 +113,7 @@ describe('PubsubEmitter', () => {
         });
 
         it('should throw a specific error if body response is invalid json', async () => {
-            const emitter = new Emitter({host: 'foo.bar', userAgent: 'foo', accessToken: 'bar', port: 443, debug: true});
+            const emitter = new Emitter({host: 'foo.bar', userAgent: 'foo', accessToken: 'bar', port: 443, async: true});
             nock('https://foo.bar').post('/api/messages').reply(200, 'foobar');
             let error: string = null;
             try {

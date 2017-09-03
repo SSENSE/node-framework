@@ -18,6 +18,7 @@ class Emitter {
         this.port = options.port && !isNaN(options.port) ? +options.port : 80;
         this.secure = options.secure === true || this.port === 443;
         this.timeout = options.timeout && !isNaN(options.timeout) ? +options.timeout : 5000;
+        this.async = typeof options.async === 'boolean' ? options.async : false;
         this.debug = typeof options.debug === 'boolean' ? options.debug : false;
         const port = ((!this.secure && this.port === 80) || (this.secure && this.port === 443)) ? '' : `:${this.port}`;
         this.baseUrl = `${this.secure ? 'https' : 'http'}://${this.host}${port}`;
@@ -35,6 +36,7 @@ class Emitter {
                     'topic_name': topic,
                     'version': 1,
                     'content': JSON.stringify(data),
+                    'async': this.async ? '1' : '0',
                     'debug': this.debug ? '1' : '0'
                 },
                 timeout: this.timeout

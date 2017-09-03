@@ -154,6 +154,7 @@ export interface PubsubEmitterOptions {
     port?: number;
     secure?: boolean;
     timeout?: number;
+    async?: boolean;
     debug?: boolean;
 }
 
