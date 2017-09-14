@@ -145,6 +145,80 @@ describe('Redis', () => {
             expect(delStub.callCount).to.equal(1);
             expect(delStub.lastCall.args).to.deep.equal(['foo:bar']);
         });
+
+        it('should handle deletion of multiple keys', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const onStub = sandbox.stub().callsFake((event: string, cb: Function) => {
+                if (event === 'data') {
+                    cb(['foo:bar', 'foo:baz']);
+                } else if (event === 'end') {
+                    cb();
+                }
+            });
+            sandbox.stub(ioredis.prototype, 'scanStream').returns({on: onStub});
+            const pipelineStub = sandbox.stub(ioredis.prototype, 'pipeline').returns({exec: sandbox.spy()});
+            const cache = new Redis({host: 'foo'});
+            await cache.del(['foo', '*']);
+            expect(pipelineStub.callCount).to.equal(1);
+            expect(pipelineStub.lastCall.args).to.deep.equal([[['del', 'foo:bar'], ['del', 'foo:baz']]]);
+        });
+
+        it('should not do anything if multiple deletions don\'t match any key', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const onStub = sandbox.stub().callsFake((event: string, cb: Function) => {
+                if (event === 'data') {
+                    cb([]);
+                } else if (event === 'end') {
+                    cb();
+                }
+            });
+            sandbox.stub(ioredis.prototype, 'scanStream').returns({on: onStub});
+            const pipelineStub = sandbox.stub(ioredis.prototype, 'pipeline').returns({exec: sandbox.spy()});
+            const cache = new Redis({host: 'foo'});
+            await cache.del(['foo', '*']);
+            expect(pipelineStub.callCount).to.equal(0);
+        });
+
+        it('should handle base client scan errors', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const onStub = sandbox.stub().callsFake((event: string, cb: Function) => {
+                if (event === 'error') {
+                    cb(new Error('Foo'));
+                }
+            });
+            sandbox.stub(ioredis.prototype, 'scanStream').returns({on: onStub});
+            let error: string = null;
+            const cache = new Redis({host: 'foo'});
+            try {
+                await cache.del(['foo', '*']);
+            } catch (e) {
+                error = e.message;
+            }
+            expect(error).to.equal('Foo');
+        });
+
+        it('hould handle base client pipeline errors', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const onStub = sandbox.stub().callsFake((event: string, cb: Function) => {
+                if (event === 'data') {
+                    cb(['foo:bar', 'foo:baz']);
+                } else if (event === 'end') {
+                    cb();
+                }
+            });
+            sandbox.stub(ioredis.prototype, 'scanStream').returns({on: onStub});
+            const pipelineStub = sandbox.stub(ioredis.prototype, 'pipeline').throws(new Error('Bar'));
+            let error: string = null;
+            const cache = new Redis({host: 'foo'});
+            try {
+                await cache.del(['foo', '*']);
+            } catch (e) {
+                error = e.message;
+            }
+            expect(pipelineStub.callCount).to.equal(1);
+            expect(pipelineStub.lastCall.args).to.deep.equal([[['del', 'foo:bar'], ['del', 'foo:baz']]]);
+            expect(error).to.equal('Bar');
+        });
     });
 
     describe('flush()', () => {

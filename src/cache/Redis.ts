@@ -75,7 +75,38 @@ export class Redis implements Cache {
     }
 
     public del(key: string|string[]): Promise<void> {
-        return this.client.del(this.getKey(key));
+        const cacheKey = this.getKey(key);
+
+        // If cacheKey contains *, use redis scan to remove multiple keys matching given pattern
+        if (cacheKey.indexOf('*') >= 0) {
+            return new Promise<void>((resolve, reject) => {
+                const scanStream = this.client.scanStream({match: cacheKey});
+                let deleteKeys: string[] = [];
+
+                scanStream.on('data', (keys: string[]) => {
+                    if (keys.length > 0) {
+                        deleteKeys = deleteKeys.concat(keys);
+                    }
+                });
+
+                scanStream.on('error', (err: Error) => {
+                    return reject(err);
+                });
+
+                scanStream.on('end', async () => {
+                    if (deleteKeys.length > 0) {
+                        try {
+                            await this.client.pipeline(deleteKeys.map((k) => ['del', k])).exec();
+                        } catch (err) {
+                            return reject(err);
+                        }
+                    }
+                    return resolve();
+                });
+            });
+        } else {
+            return this.client.del(cacheKey);
+        }
     }
 
     public flush(): Promise<void> {

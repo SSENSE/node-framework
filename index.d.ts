@@ -118,7 +118,7 @@ export interface Cache {
     get<T>(key: string|string[]): Promise<T>;
     getTtl(key: string|string[]): Promise<number>;
     set<T>(key: string|string[], value: T, ttl?: number): Promise<void>;
-    del(key: string): Promise<void>;
+    del(key: string|string[]): Promise<void>;
     flush(): Promise<void>;
 }
 
