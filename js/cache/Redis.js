@@ -63,7 +63,35 @@ class Redis {
         }
     }
     del(key) {
-        return this.client.del(this.getKey(key));
+        const cacheKey = this.getKey(key);
+        if (cacheKey.indexOf('*') >= 0) {
+            return new Promise((resolve, reject) => {
+                const scanStream = this.client.scanStream({ match: cacheKey });
+                let deleteKeys = [];
+                scanStream.on('data', (keys) => {
+                    if (keys.length > 0) {
+                        deleteKeys = deleteKeys.concat(keys);
+                    }
+                });
+                scanStream.on('error', (err) => {
+                    return reject(err);
+                });
+                scanStream.on('end', () => __awaiter(this, void 0, void 0, function* () {
+                    if (deleteKeys.length > 0) {
+                        try {
+                            yield this.client.pipeline(deleteKeys.map((k) => ['del', k])).exec();
+                        }
+                        catch (err) {
+                            return reject(err);
+                        }
+                    }
+                    return resolve();
+                }));
+            });
+        }
+        else {
+            return this.client.del(cacheKey);
+        }
     }
     flush() {
         return this.client.flushdb();
