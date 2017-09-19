@@ -23,7 +23,11 @@ class Redis {
         if (typeof connection.password === 'string') {
             options.password = connection.password;
         }
-        this.client = new IORedis(options);
+        this.options = options;
+        this.connect();
+    }
+    connect() {
+        this.client = new IORedis(this.options);
     }
     getKey(parts) {
         if (typeof parts === 'string') {

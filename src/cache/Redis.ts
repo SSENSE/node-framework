@@ -11,6 +11,7 @@ export interface ConnectionOptions {
 
 export class Redis implements Cache {
     private separator: string = ':';
+    private options: IORedis.RedisOptions;
     private client: IORedis.Redis;
 
     constructor(connection: ConnectionOptions) {
@@ -28,7 +29,15 @@ export class Redis implements Cache {
             options.password = connection.password;
         }
 
-        this.client = new IORedis(options);
+        // Store options
+        this.options = options;
+
+        // Connect to redis database
+        this.connect();
+    }
+
+    protected connect(): void {
+        this.client = new IORedis(this.options);
     }
 
     protected getKey(parts: string|string[]): string {
