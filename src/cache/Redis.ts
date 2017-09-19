@@ -12,7 +12,13 @@ export interface ConnectionOptions {
 export class Redis implements Cache {
     private separator: string = ':';
     private options: IORedis.RedisOptions;
-    private client: IORedis.Redis;
+    private _client: IORedis.Redis;
+    private get client(): IORedis.Redis {
+        if (!this._client) {
+            this._client = new IORedis(this.options);
+        }
+        return this._client;
+    }
 
     constructor(connection: ConnectionOptions) {
         if (typeof connection.separator === 'string' && connection.separator.trim() !== '') {
@@ -31,13 +37,6 @@ export class Redis implements Cache {
 
         // Store options
         this.options = options;
-
-        // Connect to redis database
-        this.connect();
-    }
-
-    protected connect(): void {
-        this.client = new IORedis(this.options);
     }
 
     protected getKey(parts: string|string[]): string {

@@ -24,10 +24,12 @@ class Redis {
             options.password = connection.password;
         }
         this.options = options;
-        this.connect();
     }
-    connect() {
-        this.client = new IORedis(this.options);
+    get client() {
+        if (!this._client) {
+            this._client = new IORedis(this.options);
+        }
+        return this._client;
     }
     getKey(parts) {
         if (typeof parts === 'string') {

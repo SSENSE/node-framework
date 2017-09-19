@@ -32,7 +32,7 @@ describe('Redis', () => {
         it('should call specified callback on client error', () => {
             sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
             const cache = new Redis({host: 'foo'});
-            (<any> cache).client = {on: (event: string, cb: Function) => cb()};
+            (<any> cache)._client = {on: (event: string, cb: Function) => cb()};
             const callback = sandbox.stub();
             expect(callback.callCount).to.equal(0);
             cache.onError(callback);
