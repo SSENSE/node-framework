@@ -425,6 +425,53 @@ export class MethodNotAllowedException extends Exception {}
 export class ConflictException extends Exception {}
 export class TooManyRequestsException extends Exception {}
 
+////////////////////
+// Promises utils //
+////////////////////
+export interface PromiseGenerator {
+    (): Promise<any>;
+}
+
+export interface PromisePoolStats {
+    /**
+     * Number of rejected promises after current pool run
+     */
+    resolved: number;
+    /**
+     * Number of resolved promises after current pool run
+     */
+    rejected: number;
+    /**
+     * Current pool run duration in milliseconds
+     */
+    duration?: number;
+}
+
+export class PromisePool {
+    /**
+     * PromisePool constructor
+     * @param generator Promise generator that should return a promise on each call, or null if all promises are executed
+     * @param max Maximum number of parallel calls
+     * @param min Minimum number of parallel calls, default to "max" parameter
+     */
+    constructor(generator: PromiseGenerator, max: number, min?: number);
+
+    /**
+     * Add a callback called every time a promise in the pool is resolved, passing in parameter the promise return
+     * @param callback Callback function
+     */
+    public onResolved(callback: (data: any) => void): PromisePool;
+    /**
+     * Add a callback called every time a promise in the pool is rejected, passing in parameter the error
+     * @param callback Callback function
+     */
+    public onRejected(callback: (err: Error) => void): PromisePool;
+    /**
+     * Start the pool of promises, returns statistics about execution when finished
+     */
+    public run(): Promise<PromisePoolStats>;
+}
+
 ///////////////////
 // Augmentations //
 ///////////////////

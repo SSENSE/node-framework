@@ -22,6 +22,9 @@ import { Base as Exception } from './exceptions/Base';
 import { BadRequestException, ConflictException, ForbiddenException, MethodNotAllowedException, NotFoundException,
     TooManyRequestsException, UnauthorizedException } from './exceptions/Exceptions';
 
+// Promises
+import { Pool as PromisePool, PoolStats as PromisePoolStats, PromiseGenerator } from './promises/Pool';
+
 export {
     // Logger
     AccessLogger, UserIdCallback, AppLogger, Logger, LogLevel, RequestLogger,
@@ -35,5 +38,7 @@ export {
     PubsubEmitter, PubsubEmitterOptions, PubsubParser, PubsubMessage,
     // Exceptions
     Exception, BadRequestException, ConflictException, ForbiddenException, MethodNotAllowedException, NotFoundException,
-    TooManyRequestsException, UnauthorizedException
+    TooManyRequestsException, UnauthorizedException,
+    // Promises
+    PromisePool, PromisePoolStats, PromiseGenerator
 };

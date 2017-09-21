@@ -27,4 +27,6 @@ exports.MethodNotAllowedException = Exceptions_1.MethodNotAllowedException;
 exports.NotFoundException = Exceptions_1.NotFoundException;
 exports.TooManyRequestsException = Exceptions_1.TooManyRequestsException;
 exports.UnauthorizedException = Exceptions_1.UnauthorizedException;
+const Pool_1 = require("./promises/Pool");
+exports.PromisePool = Pool_1.Pool;
 //# sourceMappingURL=index.js.map
