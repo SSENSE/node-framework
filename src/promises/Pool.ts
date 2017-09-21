@@ -14,25 +14,21 @@ export class Pool {
     private emitter: EventEmitter;
     private generator: PromiseGenerator;
     private max: number;
-    private min: number;
 
     private started: boolean = false;
     private runningPromises: number = 0;
     private finished: boolean = false;
     private stats: PoolStats;
 
-    constructor(generator: PromiseGenerator, max: number, min?: number) {
+    constructor(generator: PromiseGenerator, max: number) {
         if (typeof generator !== 'function') {
             throw new Error('generator must be a function');
         } else if (typeof max !== 'number' || max <= 0) {
             throw new Error('max must be a number greater than 0');
-        } else if (typeof min === 'number' && min <= 0) {
-            throw new Error('min must be a number greater than 0');
         }
 
         this.generator = generator;
         this.max = max;
-        this.min = typeof min === 'number' ? min : max;
 
         this.emitter = new EventEmitter();
 
@@ -92,7 +88,7 @@ export class Pool {
     }
 
     private SpawnNewPromise(): void {
-        if (!this.finished && this.runningPromises < this.min) {
+        if (!this.finished) {
             const promise = this.generator();
             if (promise === null) {
                 this.finished = true;

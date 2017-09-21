@@ -17,17 +17,6 @@ describe('PromisePool', () => {
         it('should throw errors if constructor parameters are invalid', () => {
             expect(() => new Pool(null, 0)).to.throw('generator must be a function');
             expect(() => new Pool(sandbox.spy(), 0)).to.throw('max must be a number greater than 0');
-            expect(() => new Pool(sandbox.spy(), 50, 0)).to.throw('min must be a number greater than 0');
-        });
-
-        it('should set min parameter value to max if absent', () => {
-            const pool = new Pool(sandbox.spy(), 25);
-            expect((<any> pool).min).to.equal(25);
-        });
-
-        it('should use min parameter valueif present', () => {
-            const pool = new Pool(sandbox.spy(), 25, 10);
-            expect((<any> pool).min).to.equal(10);
         });
     });
 
@@ -67,7 +56,7 @@ describe('PromisePool', () => {
         });
 
         it('should handle errors and reset pool parameters', async () => {
-            const pool = new Pool(sandbox.stub().returns('foo'), 50);
+            const pool = new Pool(sandbox.stub().returns('foo'), 10);
             sandbox.stub((<any> pool).emitter, 'once').throws(new Error('Foo'));
             let error: string = null;
             try {
@@ -120,7 +109,7 @@ describe('PromisePool', () => {
                 });
             };
 
-            const pool = new Pool(generator, 50);
+            const pool = new Pool(generator, 2);
             expect(await pool.run()).to.deep.include({resolved: 5, rejected: 5});
         });
     });

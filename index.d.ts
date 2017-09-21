@@ -451,10 +451,9 @@ export class PromisePool {
     /**
      * PromisePool constructor
      * @param generator Promise generator that should return a promise on each call, or null if all promises are executed
-     * @param max Maximum number of parallel calls
-     * @param min Minimum number of parallel calls, default to "max" parameter
+     * @param max Maximum number of parallel promises to run
      */
-    constructor(generator: PromiseGenerator, max: number, min?: number);
+    constructor(generator: PromiseGenerator, max: number);
 
     /**
      * Add a callback called every time a promise in the pool is resolved, passing in parameter the promise return

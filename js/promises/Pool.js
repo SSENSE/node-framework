@@ -10,7 +10,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 const events_1 = require("events");
 class Pool {
-    constructor(generator, max, min) {
+    constructor(generator, max) {
         this.started = false;
         this.runningPromises = 0;
         this.finished = false;
@@ -20,12 +20,8 @@ class Pool {
         else if (typeof max !== 'number' || max <= 0) {
             throw new Error('max must be a number greater than 0');
         }
-        else if (typeof min === 'number' && min <= 0) {
-            throw new Error('min must be a number greater than 0');
-        }
         this.generator = generator;
         this.max = max;
-        this.min = typeof min === 'number' ? min : max;
         this.emitter = new events_1.EventEmitter();
         this.emitter.on('resolved', (data) => {
             this.runningPromises -= 1;
@@ -78,7 +74,7 @@ class Pool {
         });
     }
     SpawnNewPromise() {
-        if (!this.finished && this.runningPromises < this.min) {
+        if (!this.finished) {
             const promise = this.generator();
             if (promise === null) {
                 this.finished = true;
