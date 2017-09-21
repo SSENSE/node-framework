@@ -14,12 +14,42 @@ export interface UserIdCallback {
 }
 
 export class AccessLogger {
+    /**
+     * AccessLogger constructor
+     * @param appId Application id
+     */
     constructor(appId: string);
+    /**
+     * Enable or disable AccessLogger (enabled by default)
+     * @param enabled Set to false to disable
+     */
     enable(enabled: boolean): void;
+    /**
+     * Enable pretty logs (disabled by default)
+     * @param pretty Set to true to enable pretty logs (colorized and multilines)
+     */
     setPretty(pretty: boolean): void;
+    /**
+     * Set logger output stream and enables it (default stream: process.stdout)
+     * @param stream Stream (file, stdout...) where the logs will be rendered
+     */
     setStream(stream: {write: Function}): void;
+    /**
+     * Set application id
+     * @param appId Application id, useful to override the default one used in constructor
+     */
     setAppId(appId: string): void;
+    /**
+     * Set user id callbacl
+     * @param callback Function that should return a user id (string) based on http request and response
+     */
     setUserIdCallback(callback: UserIdCallback): void;
+    /**
+     * Log an HTTP request
+     * @param req HTTP request
+     * @param res HTTP response
+     * @param next Next function called (in case of middleware use)
+     */
     logRequest(req: IncomingMessage, res: ServerResponse, next?: Function): void;
 }
 
@@ -33,48 +63,232 @@ export enum LogLevel {
 }
 
 export interface Logger {
+    /**
+     * Enable or disable Logger
+     * @param enabled Set false to disable
+     */
     enable(enabled: boolean): void;
+    /**
+     * Set application id
+     * @param appId Application id
+     */
     setAppId(appId: string): void;
+    /**
+     * Set logger minimum level
+     * @param level Logger level, all logs below this level will be ignored
+     */
     setLevel(level: LogLevel): void;
+    /**
+     * Enable pretty logs
+     * @param pretty Set to true to enable pretty logs (colorized and multilines)
+     */
     setPretty(pretty: Boolean): void;
+    /**
+     * Set logger output stream and enables it
+     * @param stream Stream (file, stdout...) where the logs will be rendered
+     */
     setStream(stream: {write: Function}): void;
+    /**
+     * Generate a new request id, random string based on GUID format
+     */
     generateRequestId(): string;
-
+    /**
+     * Write a log
+     * @param level Level used for current log
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     log(level: LogLevel, message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Alias to log() method with LogLevel.Silly level
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     silly(message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Alias to log() method with LogLevel.Verbose level
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     verbose(message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Alias to log() method with LogLevel.Info level
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     info(message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Alias to log() method with LogLevel.Warn level
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     warn(message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Alias to log() method with LogLevel.Error level
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     error(message: string, id?: string, tags?: string[], details?: any): void;
-
+    /**
+     * Returns a logger on which all log methods will use the same request id
+     * Useful to include in an HTTP request object, to be able to log the whole request process
+     * with one unique id and follow it easily in your logs
+     * @param requestId Unique id
+     */
     getRequestLogger(requestId: string): RequestLogger;
 }
 
 export interface RequestLogger {
+    /**
+     * Write a log with LogLevel.Silly level
+     * @param message Message to log
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     silly(message: string, tags?: string[], details?: any): void;
+    /**
+     * Write a log with LogLevel.Verbose level
+     * @param message Message to log
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     verbose(message: string, tags?: string[], details?: any): void;
+    /**
+     * Write a log with LogLevel.Info level
+     * @param message Message to log
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     info(message: string, tags?: string[], details?: any): void;
+    /**
+     * Write a log with LogLevel.Warn level
+     * @param message Message to log
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     warn(message: string, tags?: string[], details?: any): void;
+    /**
+     * Write a log with LogLevel.Error level
+     * @param message Message to log
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     error(message: string, tags?: string[], details?: any): void;
 }
 
 // AppLogger
 export class AppLogger implements Logger {
+    /**
+     * AppLogger constructor
+     * @param appId Application id
+     * @param level Logger minimum level (default: LogLevel.Info), all logs below this level will be ignored
+     * @param stream Logger output stream (default: process.stderr)
+     */
     constructor(appId: string, level?: LogLevel, stream?: {write: Function});
+    /**
+     * Enable or disable AppLogger (enabled by default)
+     * @param enabled Set false to disable
+     */
     enable(enabled: boolean): void;
+    /**
+     * Set application id
+     * @param appId Application id, useful to override the default one used in constructor
+     */
     setAppId(appId: string): void;
+    /**
+     * Get application id
+     */
     getAppId(): string;
+    /**
+     * Generate a new request id, random string based on GUID format
+     */
     generateRequestId(): string;
+    /**
+     * Set logger minimum level (default: LogLevel.Info)
+     * @param level Logger level, all logs below this level will be ignored
+     */
     setLevel(level: LogLevel): void;
+    /**
+     * Get logger minimum level
+     */
     getLevel(): LogLevel;
+    /**
+     * Enable pretty logs (disabled by default)
+     * @param pretty Set to true to enable pretty logs (colorized and multilines)
+     */
     setPretty(pretty: boolean): void;
+    /**
+     * Set logger output stream and enables it (default stream: process.stderr)
+     * @param stream Stream (file, stdout...) where the logs will be rendered
+     */
     setStream(stream: {write: Function}): void;
+    /**
+     * Write a log
+     * @param level Level used for current log
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     log(level: LogLevel, message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Alias to log() method with LogLevel.Silly level
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     silly(message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Alias to log() method with LogLevel.Verbose level
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     verbose(message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Alias to log() method with LogLevel.Info level
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     info(message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Alias to log() method with LogLevel.Warn level
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     warn(message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Alias to log() method with LogLevel.Error level
+     * @param message Message to log
+     * @param id Unique id of the current log, automatically generated if empty
+     * @param tags List of tags for current log
+     * @param details Any object useful for you
+     */
     error(message: string, id?: string, tags?: string[], details?: any): void;
+    /**
+     * Returns a logger on which all log methods will use the same request id
+     * Useful to include in an HTTP request object, to be able to log the whole request process
+     * with one unique id and follow it easily in your logs
+     * @param requestId Unique id
+     */
     getRequestLogger(requestId: string): RequestLogger;
 }
 
