@@ -7,7 +7,7 @@ export interface PromiseGenerator {
 export interface PoolStats {
     resolved: number;
     rejected: number;
-    duration?: number;
+    duration: number;
 }
 
 export class Pool {
@@ -18,6 +18,7 @@ export class Pool {
     private started: boolean = false;
     private runningPromises: number = 0;
     private finished: boolean = false;
+    private index: number = 0;
     private stats: PoolStats;
 
     constructor(generator: PromiseGenerator, max: number) {
@@ -32,25 +33,25 @@ export class Pool {
 
         this.emitter = new EventEmitter();
 
-        this.emitter.on('resolved', (data: any) => {
+        this.emitter.on('resolved', (data: any, index: number) => {
             this.runningPromises -= 1;
             this.stats.resolved += 1;
             this.SpawnNewPromise();
         });
 
-        this.emitter.on('rejected', (data: any) => {
+        this.emitter.on('rejected', (err: any, index: number) => {
             this.runningPromises -= 1;
             this.stats.rejected += 1;
             this.SpawnNewPromise();
         });
     }
 
-    public onResolved(callback: (data: any) => void): Pool {
+    public onResolved(callback: (data: any, index: number) => void): Pool {
         this.emitter.on('resolved', callback);
         return this;
     }
 
-    public onRejected(callback: (err: Error) => void): Pool {
+    public onRejected(callback: (err: Error, index: number) => void): Pool {
         this.emitter.on('rejected', callback);
         return this;
     }
@@ -63,7 +64,8 @@ export class Pool {
         this.started = true;
         this.finished = false;
         this.runningPromises = 0;
-        this.stats = { resolved: 0, rejected: 0 };
+        this.index = 0;
+        this.stats = { resolved: 0, rejected: 0, duration: 0 };
         const startDate = Date.now();
 
         return new Promise<PoolStats>((resolve, reject) => {
@@ -74,8 +76,6 @@ export class Pool {
 
                 this.emitter.once('finished', () => {
                     this.started = false;
-                    this.finished = true;
-                    this.runningPromises = 0;
                     this.stats.duration = Date.now() - startDate;
                     return resolve(this.stats);
                 });
@@ -104,12 +104,14 @@ export class Pool {
 
     private async handlePromise(promise: Promise<any>): Promise<void> {
         this.runningPromises += 1;
+        const index = this.index;
+        this.index += 1;
 
         try {
             const result = await Promise.resolve(promise);
-            this.emitter.emit('resolved', result);
+            this.emitter.emit('resolved', result, index);
         } catch (e) {
-            this.emitter.emit('rejected', e);
+            this.emitter.emit('rejected', e, index);
         }
     }
 }

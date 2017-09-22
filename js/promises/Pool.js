@@ -14,6 +14,7 @@ class Pool {
         this.started = false;
         this.runningPromises = 0;
         this.finished = false;
+        this.index = 0;
         if (typeof generator !== 'function') {
             throw new Error('generator must be a function');
         }
@@ -23,12 +24,12 @@ class Pool {
         this.generator = generator;
         this.max = max;
         this.emitter = new events_1.EventEmitter();
-        this.emitter.on('resolved', (data) => {
+        this.emitter.on('resolved', (data, index) => {
             this.runningPromises -= 1;
             this.stats.resolved += 1;
             this.SpawnNewPromise();
         });
-        this.emitter.on('rejected', (data) => {
+        this.emitter.on('rejected', (err, index) => {
             this.runningPromises -= 1;
             this.stats.rejected += 1;
             this.SpawnNewPromise();
@@ -50,7 +51,8 @@ class Pool {
             this.started = true;
             this.finished = false;
             this.runningPromises = 0;
-            this.stats = { resolved: 0, rejected: 0 };
+            this.index = 0;
+            this.stats = { resolved: 0, rejected: 0, duration: 0 };
             const startDate = Date.now();
             return new Promise((resolve, reject) => {
                 try {
@@ -59,8 +61,6 @@ class Pool {
                     }
                     this.emitter.once('finished', () => {
                         this.started = false;
-                        this.finished = true;
-                        this.runningPromises = 0;
                         this.stats.duration = Date.now() - startDate;
                         return resolve(this.stats);
                     });
@@ -90,12 +90,14 @@ class Pool {
     handlePromise(promise) {
         return __awaiter(this, void 0, void 0, function* () {
             this.runningPromises += 1;
+            const index = this.index;
+            this.index += 1;
             try {
                 const result = yield Promise.resolve(promise);
-                this.emitter.emit('resolved', result);
+                this.emitter.emit('resolved', result, index);
             }
             catch (e) {
-                this.emitter.emit('rejected', e);
+                this.emitter.emit('rejected', e, index);
             }
         });
     }

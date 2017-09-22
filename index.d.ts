@@ -444,7 +444,7 @@ export interface PromisePoolStats {
     /**
      * Current pool run duration in milliseconds
      */
-    duration?: number;
+    duration: number;
 }
 
 export class PromisePool {
@@ -458,13 +458,15 @@ export class PromisePool {
     /**
      * Add a callback called every time a promise in the pool is resolved, passing in parameter the promise return
      * @param callback Callback function
+     * @param index Index of the promise being resolved
      */
-    public onResolved(callback: (data: any) => void): PromisePool;
+    public onResolved(callback: (data: any, index: number) => void): PromisePool;
     /**
      * Add a callback called every time a promise in the pool is rejected, passing in parameter the error
      * @param callback Callback function
+     * @param index Index of the promise being rejected
      */
-    public onRejected(callback: (err: Error) => void): PromisePool;
+    public onRejected(callback: (err: Error, index: number) => void): PromisePool;
     /**
      * Start the pool of promises, returns statistics about execution when finished
      */

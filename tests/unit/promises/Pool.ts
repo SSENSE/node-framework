@@ -87,9 +87,8 @@ describe('PromisePool', () => {
 
             const resolvedSpy = sandbox.spy();
             const rejectedSpy = sandbox.spy();
-            const pool = new Pool(generator, 50).onResolved(data => resolvedSpy(data)).onRejected(err => rejectedSpy(err));
+            const pool = new Pool(generator, 50).onResolved(resolvedSpy).onRejected(err => rejectedSpy(err));
             await pool.run();
-            expect(resolvedSpy.callCount).to.equal(5);
             expect(rejectedSpy.callCount).to.equal(5);
         });
 
@@ -105,12 +104,37 @@ describe('PromisePool', () => {
                     const current = i;
                     setTimeout(() => {
                         return current % 2 === 0 ? resolve(current) : reject(new Error(current.toString()));
-                    }, 10);
+                    }, 2);
                 });
             };
 
             const pool = new Pool(generator, 2);
             expect(await pool.run()).to.deep.include({resolved: 5, rejected: 5});
+        });
+
+        it('should return the right promise index in callback functions', async () => {
+            let i = 0;
+            const generator = (): any => {
+                i += 1;
+                if (i > 10) {
+                    return null;
+                }
+
+                return new Promise<number>((resolve, reject) => {
+                    const current = i;
+                    setTimeout(() => {
+                        return resolve(current);
+                    }, 25 - (i * 2));
+                });
+            };
+
+            const result: number[] = [];
+            const pool = new Pool(generator, 50).onResolved((data, index) => {
+                result[index] = data;
+            });
+
+            await pool.run();
+            expect(result).to.deep.equal(Array.from({length: 10}, (v, k) => k + 1));
         });
     });
 });
