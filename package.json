@@ -1,6 +1,6 @@
 {
   "name": "@ssense/framework",
-  "version": "0.1.26",
+  "version": "0.1.27",
   "description": "Base framework regrouping all SSENSE's utilities for Node.js developers",
   "main": "./js",
   "typings": "index.d.ts",
@@ -19,10 +19,14 @@
     "utilities"
   ],
   "homepage": "https://github.com/Groupe-Atallah/ms-product#readme",
-  "author": {
+  "author": "SSENSE Dev Team",
+  "contributors": [{
     "name": "Rémy Jeancolas",
     "email": "remy.jeancolas@ssense.com"
-  },
+  }, {
+    "name": "Hugo Pelletier",
+    "email": "hugo.pelletier@ssense.com"
+  }],
   "license": "MIT",
   "repository": {
     "type": "git",
