@@ -197,7 +197,7 @@ describe('Redis', () => {
             expect(error).to.equal('Foo');
         });
 
-        it('hould handle base client pipeline errors', async () => {
+        it('should handle base client pipeline errors', async () => {
             sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
             const onStub = sandbox.stub().callsFake((event: string, cb: Function) => {
                 if (event === 'data') {
@@ -228,6 +228,28 @@ describe('Redis', () => {
             const cache = new Redis({host: 'foo'});
             await cache.flush();
             expect(flushdbStub.callCount).to.equal(1);
+        });
+    });
+
+    describe('keys()', () => {
+        it('should call keys method on base client', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const getKeysStub = sandbox.stub(ioredis.prototype, 'keys').returns(['foo:1', 'foo:2']);
+            const cache = new Redis({host: 'foo'});
+            const result = await cache.keys('foo:*');
+            expect(getKeysStub.callCount).to.equal(1);
+            expect(getKeysStub.lastCall.args).to.deep.equal(['foo:*']);
+            expect(result).to.deep.equal(['foo:1', 'foo:2']);
+        });
+
+        it('should call keys method on base client without result', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const getKeysStub = sandbox.stub(ioredis.prototype, 'keys').returns([]);
+            const cache = new Redis({host: 'foo'});
+            const result = await cache.keys('foo:*');
+            expect(getKeysStub.callCount).to.equal(1);
+            expect(getKeysStub.lastCall.args).to.deep.equal(['foo:*']);
+            expect(result).to.deep.equal([]);
         });
     });
 });

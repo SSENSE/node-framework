@@ -120,4 +120,8 @@ export class Redis implements Cache {
     public flush(): Promise<void> {
         return this.client.flushdb();
     }
+
+    public keys(match: string): Promise<string[]> {
+        return this.client.keys(match);
+    }
 }
