@@ -334,6 +334,7 @@ export interface Cache {
     set<T>(key: string|string[], value: T, ttl?: number): Promise<void>;
     del(key: string|string[]): Promise<void>;
     flush(): Promise<void>;
+    keys(match: string): Promise<string[]>;
 }
 
 export interface RedisConnectionOptions {
@@ -356,6 +357,7 @@ export class RedisConnection implements Cache {
     public set<T>(key: string|string[], value: T, ttl?: number): Promise<void>;
     public del(key: string|string[]): Promise<void>;
     public flush(): Promise<void>;
+    public keys(match: string): Promise<string[]>;
 }
 
 //////////////////

@@ -102,6 +102,9 @@ class Redis {
     flush() {
         return this.client.flushdb();
     }
+    keys(match) {
+        return this.client.keys(match);
+    }
 }
 exports.Redis = Redis;
 //# sourceMappingURL=Redis.js.map
