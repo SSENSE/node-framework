@@ -296,15 +296,38 @@ export class AppLogger implements Logger {
 // HTTP utils //
 ////////////////
 export abstract class SafeShutdownServer {
+    /**
+     * Current server status, true is server is shutting down
+     */
     public readonly isShuttingDown: boolean;
+    /**
+     * Init server safe shutdown sequence, returns when server is shut down
+     * @param timeout Maximum duration to wait before force closing all connections (in milliseconds) defaults to infinite (never force closes)
+     */
     public safeShutdown(timeout?: number): Promise<void>;
+    /**
+     * Augment a server to add safe shutdown capability (by adding safeShutdown() method), returns the augmented server
+     * @param server Server to augment, must implement net.Server interface
+     */
     public static create<T extends Server>(server: T): T & SafeShutdownServer;
 }
 
 export interface RequestValidation {
+    /**
+     * Request headers validation (be sure to use lowercase for each header to validate as node.js converts http headers to lowercase)
+     */
     headers?: RequestValidationEntity;
+    /**
+     * Request params validation
+     */
     params?: RequestValidationEntity;
+    /**
+     * Request query validation
+     */
     query?: RequestValidationEntity;
+    /**
+     * Request body validation
+     */
     body?: RequestValidationEntity;
 }
 
@@ -313,15 +336,47 @@ export interface RequestValidationEntity {
 }
 
 export interface RequestValidationParam {
+    /**
+     * Expected param type, must be a valid RequestValidationParamType
+     */
     type: RequestValidationParamType;
+    /**
+     * Set to true if param is required (default false)
+     */
     required?: boolean;
+    /**
+     * Param min length (valid for types "string", "numeric", "number" and "array"), default undefined
+     */
     min?: number;
+    /**
+     * Param max length (valid for types "string", "numeric", "number" and "array"), default undefined
+     */
     max?: number;
+    /**
+     * Param required length (valid for types "string", "numeric", "number" and "array"), default undefined
+     */
     length?: number;
+    /**
+     * Expected array type, only valid if type is "array", must be a valid RequestValidationParamArrayType
+     */
     arrayType?: RequestValidationParamArrayType;
+    /**
+     * Array separator, useful to transform "stringified" array (for example in query) into a real javascript array
+     * Only valid if type is "array" and arrayType is defined
+     */
     arraySeparator?: string;
+    /**
+     * List of acceptable values for param
+     */
     values?: any[];
+    /**
+     * RegExp that param must implemet to be considered valid (default undefined)
+     */
     regex?: RegExp;
+    /**
+     * Optional callback function called after param validation to perform a specific transformation
+     * @param data Parameter value after validation
+     */
     format?: <T>(data: T) => T;
 }
 
@@ -329,30 +384,66 @@ export type RequestValidationParamType = 'string'|'number'|'boolean'|'numeric'|'
 export type RequestValidationParamArrayType = 'string'|'number'|'boolean'|'numeric';
 
 export interface RequestValidatorConfig {
+    /**
+     * Allow fields that are not part of validation in request (headers, params, query and body), defaults to true
+     * If set to false, all unknown fields will be removed
+     */
     allowUnknownFields?: RequestValidatorConfigFields|boolean;
 }
 
 export interface RequestValidatorConfigFields {
+    /**
+     * Allow unknown fields for request headers (default true)
+     */
     headers?: boolean;
+    /**
+     * Allow unknown fields for request params (default true)
+     */
     params?: boolean;
+    /**
+     * Allow unknown fields for request query (default true)
+     */
     query?: boolean;
+    /**
+     * Allow unknown fields for request body (default true)
+     */
     body?: boolean;
 }
 
 export class RequestValidator {
+    /**
+     * Set validator global config
+     * @param config Validator config
+     */
     public static setConfig(config: RequestValidatorConfig): void;
+    /**
+     * Returns a middleware that handles validation for a given request
+     * @param validation Valid RequestValidation object
+     */
     public static validate(validation: RequestValidation): (req: any, res: any, next: Function) => void;
 }
 
 export class ValidationError extends Error {
+    /**
+     * List of request validation errors
+     */
     public errors: FieldValidationError[];
 
     constructor(errors?: FieldValidationError[]);
 }
 
 export class FieldValidationError {
+    /**
+     * Field on which the validation failed
+     */
     public readonly field: string;
+    /**
+     * Field location in request (headers, params, query, body)
+     */
     public readonly location: string;
+    /**
+     * Validation error messages
+     */
     public readonly messages: string[];
 
     constructor(field: string, location: string);
