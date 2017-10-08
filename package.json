@@ -20,13 +20,16 @@
   ],
   "homepage": "https://github.com/Groupe-Atallah/ms-product#readme",
   "author": "SSENSE Dev Team",
-  "contributors": [{
-    "name": "Rémy Jeancolas",
-    "email": "remy.jeancolas@ssense.com"
-  }, {
-    "name": "Hugo Pelletier",
-    "email": "hugo.pelletier@ssense.com"
-  }],
+  "contributors": [
+    {
+      "name": "Rémy Jeancolas",
+      "email": "remy.jeancolas@ssense.com"
+    },
+    {
+      "name": "Hugo Pelletier",
+      "email": "hugo.pelletier@ssense.com"
+    }
+  ],
   "license": "MIT",
   "repository": {
     "type": "git",
@@ -69,9 +72,9 @@
     "nyc": "^11.0.3",
     "sinon": "^2.3.8",
     "ts-node": "^3.2.1",
-    "tslint": "^5.5.0",
+    "tslint": "^5.7.0",
     "tslint-microsoft-contrib": "^5.0.1",
-    "typescript": "^2.4.2"
+    "typescript": "^2.5.3"
   },
   "nyc": {
     "include": [
@@ -82,7 +85,8 @@
       "**/index.ts",
       "**/*.d.ts",
       "src/cache/Cache.ts",
-      "src/pubsub/parser/Provider.ts"
+      "src/pubsub/parser/Provider.ts",
+      "src/http/validation/RequestValidation.ts"
     ],
     "extension": [
       ".ts"

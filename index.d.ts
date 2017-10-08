@@ -301,6 +301,51 @@ export abstract class SafeShutdownServer {
     public static create<T extends Server>(server: T): T & SafeShutdownServer;
 }
 
+export interface RequestValidation {
+    headers?: RequestValidationEntity;
+    params?: RequestValidationEntity;
+    query?: RequestValidationEntity;
+    body?: RequestValidationEntity;
+}
+
+export interface RequestValidationEntity {
+    [key: string]: RequestValidationParam;
+}
+
+export interface RequestValidationParam {
+    type: RequestValidationParamType;
+    required?: boolean;
+    min?: number;
+    max?: number;
+    length?: number;
+    arrayType?: RequestValidationParamArrayType;
+    arraySeparator?: string;
+    values?: any[];
+    regex?: RegExp;
+    format?: <T>(data: T) => T;
+}
+
+export type RequestValidationParamType = 'string'|'number'|'boolean'|'numeric'|'date'|'array'|'object';
+export type RequestValidationParamArrayType = 'string'|'number'|'boolean'|'numeric';
+
+export class RequestValidator {
+    public static validate(validation: RequestValidation): (req: any, res: any, next: Function) => void;
+}
+
+export class ValidationError extends Error {
+    public errors: FieldValidationError[];
+
+    constructor(errors?: FieldValidationError[]);
+}
+
+export class FieldValidationError {
+    public readonly field: string;
+    public readonly location: string;
+    public readonly messages: string[];
+
+    constructor(field: string, location: string);
+}
+
 ///////////////////
 // MongoDb utils //
 ///////////////////

@@ -4,6 +4,10 @@ import { AppLogger, Logger, LogLevel, RequestLogger } from './logger/AppLogger';
 
 // HTTP
 import { SafeShutdownServer } from './http/SafeShutdownServer';
+import { RequestValidator } from './http/validation/RequestValidator';
+import { ValidationError, FieldValidationError } from './http/validation/ValidationError';
+import { RequestValidation, RequestValidationEntity, RequestValidationParam, RequestValidationParamType, RequestValidationParamArrayType }
+    from './http/validation/RequestValidation';
 
 // MongoDb
 import { Connection as MongoConnection, ConnectionOptions as MongoConnectionOptions } from './mongo/Connection';
@@ -29,7 +33,8 @@ export {
     // Logger
     AccessLogger, UserIdCallback, AppLogger, Logger, LogLevel, RequestLogger,
     // HTTP
-    SafeShutdownServer,
+    SafeShutdownServer, RequestValidator, ValidationError, FieldValidationError, RequestValidation, RequestValidationEntity,
+    RequestValidationParam, RequestValidationParamType, RequestValidationParamArrayType,
     // MongoDB
     MongoConnection, MongoConnectionOptions,
     // Cache / Redis
