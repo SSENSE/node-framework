@@ -2,6 +2,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const ValidationError_1 = require("./ValidationError");
 class RequestValidator {
+    static setConfig(config) {
+        if (typeof config === 'object' && config.hasOwnProperty('allowUnknownFields')) {
+            const unknownFieldsType = typeof config.allowUnknownFields;
+            if (unknownFieldsType === 'boolean') {
+                Object.keys(RequestValidator.allowUnknownFields).forEach(key => {
+                    RequestValidator.allowUnknownFields[key] = config.allowUnknownFields;
+                });
+            }
+            else if (unknownFieldsType === 'object') {
+                Object.keys(config.allowUnknownFields).forEach(key => {
+                    if (RequestValidator.allowUnknownFields.hasOwnProperty(key)
+                        && typeof config.allowUnknownFields[key] === 'boolean') {
+                        RequestValidator.allowUnknownFields[key] = config.allowUnknownFields[key];
+                    }
+                });
+            }
+        }
+    }
     static validate(validation) {
         const internalValidation = RequestValidator.cleanValidation(validation);
         return (request, response, callback) => {
@@ -9,6 +27,14 @@ class RequestValidator {
                 let errors = [];
                 Object.keys(internalValidation).forEach(key => {
                     errors = errors.concat(RequestValidator.validateEntity(key, request[key], internalValidation[key]));
+                    if (RequestValidator.allowUnknownFields[key] === false && request[key]) {
+                        const fields = Object.keys(request[key]);
+                        for (let i = 0, length = fields.length; i < length; i += 1) {
+                            if (!internalValidation[key].hasOwnProperty(fields[i])) {
+                                delete request[key][fields[i]];
+                            }
+                        }
+                    }
                 });
                 if (errors.length > 0) {
                     return callback(new ValidationError_1.ValidationError(errors));
@@ -227,5 +253,11 @@ class RequestValidator {
         return values.indexOf(input) >= 0;
     }
 }
+RequestValidator.allowUnknownFields = {
+    headers: true,
+    params: true,
+    query: true,
+    body: true
+};
 exports.RequestValidator = RequestValidator;
 //# sourceMappingURL=RequestValidator.js.map

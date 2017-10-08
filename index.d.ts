@@ -328,7 +328,19 @@ export interface RequestValidationParam {
 export type RequestValidationParamType = 'string'|'number'|'boolean'|'numeric'|'date'|'array'|'object';
 export type RequestValidationParamArrayType = 'string'|'number'|'boolean'|'numeric';
 
+export interface RequestValidatorConfig {
+    allowUnknownFields?: RequestValidatorConfigFields|boolean;
+}
+
+export interface RequestValidatorConfigFields {
+    headers?: boolean;
+    params?: boolean;
+    query?: boolean;
+    body?: boolean;
+}
+
 export class RequestValidator {
+    public static setConfig(config: RequestValidatorConfig): void;
     public static validate(validation: RequestValidation): (req: any, res: any, next: Function) => void;
 }
 

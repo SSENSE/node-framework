@@ -86,7 +86,8 @@
       "**/*.d.ts",
       "src/cache/Cache.ts",
       "src/pubsub/parser/Provider.ts",
-      "src/http/validation/RequestValidation.ts"
+      "src/http/validation/RequestValidation.ts",
+      "src/http/validation/RequestValidatorConfig.ts"
     ],
     "extension": [
       ".ts"

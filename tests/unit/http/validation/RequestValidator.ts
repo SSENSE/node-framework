@@ -10,7 +10,67 @@ describe('RequestValidator', () => {
     });
 
     afterEach(() => {
+        RequestValidator.setConfig({allowUnknownFields: true});
         sandbox.restore();
+    });
+
+    describe('setConfig()', () => {
+        it('should not do anything if config is invalid', () => {
+            RequestValidator.setConfig({});
+            expect((<any> RequestValidator).allowUnknownFields).to.deep.equal({
+                headers: true,
+                params: true,
+                query: true,
+                body: true
+            }, 'Config should be the default one');
+
+            RequestValidator.setConfig(<any> {allowUnknownFields: 'foo'});
+            expect((<any> RequestValidator).allowUnknownFields).to.deep.equal({
+                headers: true,
+                params: true,
+                query: true,
+                body: true
+            }, 'Config should be the default one');
+
+            RequestValidator.setConfig(<any> {allowUnknownFields: {foo: 'false'}});
+            expect((<any> RequestValidator).allowUnknownFields).to.deep.equal({
+                headers: true,
+                params: true,
+                query: true,
+                body: true
+            }, 'Config should be the default one');
+        });
+
+        it('should update all allowUnknownFields params if given a boulean', () => {
+            RequestValidator.setConfig({allowUnknownFields: false});
+            expect((<any> RequestValidator).allowUnknownFields).to.deep.equal({
+                headers: false,
+                params: false,
+                query: false,
+                body: false
+            }, 'Config should have been updated');
+
+            RequestValidator.setConfig({allowUnknownFields: true});
+            expect((<any> RequestValidator).allowUnknownFields).to.deep.equal({
+                headers: true,
+                params: true,
+                query: true,
+                body: true
+            }, 'Config should have been updated');
+        });
+
+        it('should only update given fields if allowUnknownFiels is a valid object', () => {
+            RequestValidator.setConfig({allowUnknownFields: {
+                body: false,
+                query: false
+            }});
+            expect((<any> RequestValidator).allowUnknownFields).to.deep.equal({
+                headers: true,
+                params: true,
+                query: false,
+                body: false
+            }, 'Config should have been updated');
+        });
     });
 
     describe('validate()', () => {
@@ -84,6 +144,22 @@ describe('RequestValidator', () => {
                 bar: {type: 'number'}
             }], 'Params should have been cleaned');
             expect(next.callCount).to.equal(1);
+        });
+
+        it('should remove extra params in request if needed', () => {
+            const next = sandbox.spy();
+            const validate = RequestValidator.validate({
+                query: {
+                    a: {type: 'string', required: true}
+                }
+            });
+            RequestValidator.setConfig({allowUnknownFields: false});
+
+            const req: any = {query: {a: 'a', b: 'b'}};
+            validate(req, null, next);
+            expect(next.callCount).to.equal(1);
+            expect(next.lastCall.args).to.deep.equal([]);
+            expect(req).to.deep.equal({query: {a: 'a'}});
         });
 
         describe('Request validation', () => {

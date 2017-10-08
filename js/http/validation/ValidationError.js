@@ -9,9 +9,9 @@ class ValidationError extends Error {
 exports.ValidationError = ValidationError;
 class FieldValidationError {
     constructor(field, location) {
-        this.messages = [];
         this.field = field;
         this.location = location;
+        this.messages = [];
     }
 }
 exports.FieldValidationError = FieldValidationError;

@@ -1,7 +1,33 @@
+import { RequestValidatorConfig, RequestValidatorConfigFields } from './RequestValidatorConfig';
 import { RequestValidation, RequestValidationEntity, RequestValidationParam } from './RequestValidation';
 import { ValidationError, FieldValidationError } from './ValidationError';
 
 export class RequestValidator {
+    private static allowUnknownFields: RequestValidatorConfigFields = {
+        headers: true,
+        params: true,
+        query: true,
+        body: true
+    };
+
+    public static setConfig(config: RequestValidatorConfig): void {
+        if (typeof config === 'object' && config.hasOwnProperty('allowUnknownFields')) {
+            const unknownFieldsType = typeof config.allowUnknownFields;
+            if (unknownFieldsType === 'boolean') {
+                Object.keys(RequestValidator.allowUnknownFields).forEach(key => {
+                    RequestValidator.allowUnknownFields[key] = <boolean> config.allowUnknownFields;
+                });
+            } else if (unknownFieldsType === 'object') {
+                Object.keys(config.allowUnknownFields).forEach(key => {
+                    if (RequestValidator.allowUnknownFields.hasOwnProperty(key)
+                        && typeof (<RequestValidatorConfigFields> config.allowUnknownFields)[key] === 'boolean') {
+                        RequestValidator.allowUnknownFields[key] = (<RequestValidatorConfigFields> config.allowUnknownFields)[key];
+                    }
+                });
+            }
+        }
+    }
+
     public static validate(validation: RequestValidation): (req: any, res: any, next: Function) => void {
         const internalValidation = RequestValidator.cleanValidation(validation);
 
@@ -11,6 +37,16 @@ export class RequestValidator {
 
                 Object.keys(internalValidation).forEach(key => {
                     errors = errors.concat(RequestValidator.validateEntity(key, request[key], internalValidation[key]));
+
+                    if (RequestValidator.allowUnknownFields[key] === false && request[key]) {
+                        const fields = Object.keys(request[key]);
+                        // tslint:disable-next-line:one-variable-per-declaration
+                        for (let i = 0, length = fields.length; i < length; i += 1) {
+                            if (!internalValidation[key].hasOwnProperty(fields[i])) {
+                                delete request[key][fields[i]];
+                            }
+                        }
+                    }
                 });
 
                 if (errors.length > 0) {
