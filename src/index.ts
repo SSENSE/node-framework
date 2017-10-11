@@ -9,6 +9,7 @@ import { RequestValidatorConfig, RequestValidatorConfigFields } from './http/val
 import { ValidationError, FieldValidationError } from './http/validation/ValidationError';
 import { RequestValidation, RequestValidationEntity, RequestValidationParam, RequestValidationParamType, RequestValidationParamArrayType }
     from './http/validation/RequestValidation';
+import { SlackNotifier } from './http/SlackNotifier';
 
 // MongoDb
 import { Connection as MongoConnection, ConnectionOptions as MongoConnectionOptions } from './mongo/Connection';
@@ -36,6 +37,7 @@ export {
     // HTTP
     SafeShutdownServer, RequestValidator, RequestValidatorConfig, RequestValidatorConfigFields, ValidationError, FieldValidationError,
     RequestValidation, RequestValidationEntity, RequestValidationParam, RequestValidationParamType, RequestValidationParamArrayType,
+    SlackNotifier,
     // MongoDB
     MongoConnection, MongoConnectionOptions,
     // Cache / Redis

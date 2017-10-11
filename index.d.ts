@@ -449,6 +449,24 @@ export class FieldValidationError {
     constructor(field: string, location: string);
 }
 
+export class SlackNotifier {
+    /**
+     * Create an helper that sends slack messages
+     * @param webHookUrl Webhook url given by Slack when creating an incoming webhook (example: https://hooks.slack.com/services/T00000000/B00000000/XXXXXXXXXXXXXXXXXXXXXXXX)
+     * @param defaultChannel Default channel to send notifications to
+     * @param userName Username that will be shown in slack channel when sending messages
+     * @param icon Icon that will be shown in slack channel when sending messages (default :ghost:)
+     */
+    constructor(webHookUrl: string, defaultChannel: string, userName: string, icon?: string);
+    /**
+     * Send a message to Slack
+     * @param message Message to send
+     * @param detail Optional detail about message
+     * @param channel Send message to a different channel, uses defaultChannel if not specified
+     */
+    public send(message: string, detail?: string, channel?: string): Promise<void>;
+}
+
 ///////////////////
 // MongoDb utils //
 ///////////////////
