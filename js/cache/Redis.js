@@ -59,6 +59,9 @@ class Redis {
     getTtl(key) {
         return this.client.ttl(this.getKey(key));
     }
+    getBuffer(key) {
+        return this.client.getBuffer(this.getKey(key));
+    }
     set(key, value, ttl) {
         const realKey = this.getKey(key);
         if (!isNaN(ttl) && ttl > 0) {
