@@ -136,7 +136,6 @@ describe('Redis', () => {
         });
     });
 
-
     describe('set()', () => {
         it('should call set method on base client if TTL is not defined', async () => {
             sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
