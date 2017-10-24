@@ -497,6 +497,7 @@ export class MongoConnection {
 export interface Cache {
     get<T>(key: string|string[]): Promise<T>;
     getTtl(key: string|string[]): Promise<number>;
+    getBuffer(key: string|string[]): Promise<Buffer>;
     set<T>(key: string|string[], value: T, ttl?: number): Promise<void>;
     del(key: string|string[]): Promise<void>;
     flush(): Promise<void>;
@@ -520,6 +521,7 @@ export class RedisConnection implements Cache {
     public setSeparator(separator: string): void;
     public get<T>(key: string|string[]): Promise<T>;
     public getTtl(key: string|string[]): Promise<number>;
+    public getBuffer(key: string|string[]): Promise<Buffer>;
     public set<T>(key: string|string[], value: T, ttl?: number): Promise<void>;
     public del(key: string|string[]): Promise<void>;
     public flush(): Promise<void>;
