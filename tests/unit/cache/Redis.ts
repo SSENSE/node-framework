@@ -114,6 +114,29 @@ describe('Redis', () => {
         });
     });
 
+    describe('getBuffer()', () => {
+        it('should return null if key doesn\'t exist', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const getBufferStub = sandbox.stub(ioredis.prototype, 'getBuffer').returns(null);
+            const cache = new Redis({host: 'foo'});
+            const result = await cache.getBuffer(['foo', 'bar']);
+            expect(getBufferStub.callCount).to.equal(1);
+            expect(getBufferStub.lastCall.args).to.deep.equal(['foo:bar']);
+            expect(result).to.equal(null, 'Result should be null');
+        });
+
+        it('should return result if key exists', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const getBufferStub = sandbox.stub(ioredis.prototype, 'getBuffer').returns(new Buffer('Sample'));
+            const cache = new Redis({host: 'foo'});
+            const result = await cache.getBuffer('foo');
+            expect(getBufferStub.callCount).to.equal(1);
+            expect(getBufferStub.lastCall.args).to.deep.equal(['foo']);
+            expect(result).to.deep.equal(new Buffer('Sample'));
+        });
+    });
+
+
     describe('set()', () => {
         it('should call set method on base client if TTL is not defined', async () => {
             sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
