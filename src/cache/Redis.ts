@@ -71,8 +71,8 @@ export class Redis implements Cache {
         return this.client.ttl(this.getKey(key));
     }
 
-    public async getBuffer(key: string|string[]): Promise<Buffer> {
-        return await this.client.getBuffer(this.getKey(key));
+    public getBuffer(key: string|string[]): Promise<Buffer> {
+        return this.client.getBuffer(this.getKey(key));
     }
 
     // tslint:disable-next-line:no-reserved-keywords
