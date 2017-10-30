@@ -71,6 +71,15 @@ class Redis {
             return this.client.set(realKey, JSON.stringify(value));
         }
     }
+    setBuffer(key, value, ttl) {
+        const realKey = this.getKey(key);
+        if (!isNaN(ttl) && ttl > 0) {
+            return this.client.setex(realKey, ttl, value);
+        }
+        else {
+            return this.client.set(realKey, value);
+        }
+    }
     del(key) {
         const cacheKey = this.getKey(key);
         if (cacheKey.indexOf('*') >= 0) {

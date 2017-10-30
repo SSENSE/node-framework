@@ -86,6 +86,16 @@ export class Redis implements Cache {
         }
     }
 
+    public setBuffer(key: string|string[], value: Buffer, ttl?: number): Promise<void> {
+        const realKey = this.getKey(key);
+
+        if (!isNaN(ttl) && ttl > 0) {
+            return this.client.setex(realKey, ttl, value);
+        } else {
+            return this.client.set(realKey, value);
+        }
+    }
+
     public del(key: string|string[]): Promise<void> {
         const cacheKey = this.getKey(key);
 

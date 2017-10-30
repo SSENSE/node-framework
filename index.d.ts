@@ -499,6 +499,7 @@ export interface Cache {
     getTtl(key: string|string[]): Promise<number>;
     getBuffer(key: string|string[]): Promise<Buffer>;
     set<T>(key: string|string[], value: T, ttl?: number): Promise<void>;
+    setBuffer(key: string|string[], value: Buffer, ttl?: number): Promise<void>;
     del(key: string|string[]): Promise<void>;
     flush(): Promise<void>;
     keys(match: string): Promise<string[]>;
@@ -523,6 +524,7 @@ export class RedisConnection implements Cache {
     public getTtl(key: string|string[]): Promise<number>;
     public getBuffer(key: string|string[]): Promise<Buffer>;
     public set<T>(key: string|string[], value: T, ttl?: number): Promise<void>;
+    public setBuffer(key: string|string[], value: Buffer, ttl?: number): Promise<void>;
     public del(key: string|string[]): Promise<void>;
     public flush(): Promise<void>;
     public keys(match: string): Promise<string[]>;

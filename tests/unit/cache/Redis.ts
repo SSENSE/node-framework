@@ -158,6 +158,28 @@ describe('Redis', () => {
         });
     });
 
+    describe('setBuffer()', () => {
+        it('should call set method on base client if TTL is not defined', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const setStub = sandbox.stub(ioredis.prototype, 'set');
+            const cache = new Redis({host: 'foo'});
+            const data: Buffer = new Buffer('Sample Data for Buffer');
+            await cache.setBuffer('foo', data);
+            expect(setStub.callCount).to.equal(1);
+            expect(setStub.lastCall.args).to.deep.equal(['foo', data]);
+        });
+
+        it('should call setex method on base client if TTL is defined', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const setexStub = sandbox.stub(ioredis.prototype, 'setex');
+            const cache = new Redis({host: 'foo'});
+            const data: Buffer = new Buffer('Sample Data for Buffer');
+            await cache.setBuffer('foo', data, 15);
+            expect(setexStub.callCount).to.equal(1);
+            expect(setexStub.lastCall.args).to.deep.equal(['foo', 15, data]);
+        });
+    });
+
     describe('del()', () => {
         it('should call del method on base client', async () => {
             sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
