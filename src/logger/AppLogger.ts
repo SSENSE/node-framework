@@ -115,7 +115,12 @@ export class AppLogger implements Logger {
         log.level = this.getLogLevel(level);
         log.message = message;
         log.tags = tags || [];
-        log.details = details || null;
+
+        if (typeof details === 'string') {
+            details = { details };
+        }
+
+        log.details = details || {};
 
         if (this.pretty) {
             let result = JSON.stringify(log, null, 4).replace(/"level": "([^"]*)"/g, `"level": "${this.colorizeLevel(level)}"`);
