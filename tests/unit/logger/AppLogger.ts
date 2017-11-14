@@ -185,9 +185,9 @@ describe('AppLogger', () => {
             const writeStub = sandbox.stub();
             const logger = new AppLogger('foo', LogLevel.Info, {write: writeStub});
             logger.setPretty(true);
-            logger.log(LogLevel.Info, 'message', 'id', [], 'foo\nbar');
+            logger.log(LogLevel.Info, 'message', 'id', [], 'foobar');
             expect(writeStub.callCount).to.equal(1);
-            expect(writeStub.lastCall.args[0]).to.contain('foo\n            bar');
+            expect(writeStub.lastCall.args[0]).to.contain('{\n        "string": "foobar"\n    }');
         });
     });
 

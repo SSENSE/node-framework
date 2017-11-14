@@ -117,7 +117,7 @@ export class AppLogger implements Logger {
         log.tags = tags || [];
 
         if (typeof details === 'string') {
-            details = { details };
+            details = { string: details };
         }
 
         log.details = details || {};
