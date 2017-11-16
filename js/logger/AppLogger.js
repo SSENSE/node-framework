@@ -87,10 +87,7 @@ class AppLogger {
         }
         log.details = details || {};
         if (this.pretty) {
-            let result = JSON.stringify(log, null, 4).replace(/"level": "([^"]*)"/g, `"level": "${this.colorizeLevel(level)}"`);
-            if (typeof log.details === 'string') {
-                result = result.replace(/"details": ".*"/g, `"details": "${log.details.replace(/\n/g, `\n${' '.repeat(12)}`)}"`);
-            }
+            const result = JSON.stringify(log, null, 4).replace(/"level": "([^"]*)"/g, `"level": "${this.colorizeLevel(level)}"`);
             this.stream.write(`${result}\n`);
         }
         else {
