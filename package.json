@@ -1,6 +1,6 @@
 {
   "name": "@ssense/framework",
-  "version": "0.2.4",
+  "version": "0.2.5",
   "description": "Base framework regrouping all SSENSE's utilities for Node.js developers",
   "main": "./js",
   "typings": "index.d.ts",
@@ -28,6 +28,14 @@
     {
       "name": "Hugo Pelletier",
       "email": "hugo.pelletier@ssense.com"
+    },
+    {
+      "name": "Yasser Akhoondi",
+      "email": "yasser.akhoondi@ssense.com"
+    },
+    {
+      "name": "Ilyess Bachiri",
+      "email": "ilyess.bachiri@ssense.com"
     }
   ],
   "license": "MIT",
