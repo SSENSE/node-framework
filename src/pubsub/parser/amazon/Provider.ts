@@ -33,6 +33,9 @@ export class Provider implements BaseProvider {
     private readonly amazonUrlRegex: RegExp = /^https:\/\/sns\.[^\/]+\.amazonaws\.com\/.*\.pem$/;
 
     private certs: {[url: string]: string} = {};
+
+    constructor(private isDevMode: boolean = false) { }
+
     private messageParseFunction: (message: string) => string;
 
     public setMessageParseFunction(func: (message: string) => string): void {
@@ -53,8 +56,10 @@ export class Provider implements BaseProvider {
     }
 
     public async parse(message: AmazonMessage): Promise<Message> {
-        // First check that message is valid
-        await this.validateSignature(message);
+        // First check that message is valid if not in dev mode
+        if (!this.isDevMode) {
+            await this.validateSignature(message);
+        }
 
         const result = new Message();
         result.provider = this.providerName;

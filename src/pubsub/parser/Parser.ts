@@ -5,9 +5,9 @@ import { Message } from './Message';
 export class Parser {
     private providers: Provider[];
 
-    constructor() {
+    constructor(isDevMode?: boolean) {
         this.providers = [
-            new Amazon()
+            new Amazon(isDevMode)
         ];
     }
 
