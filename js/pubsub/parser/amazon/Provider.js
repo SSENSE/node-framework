@@ -18,7 +18,8 @@ var AmazonMessageType;
     AmazonMessageType["UnsubscribeConfirmation"] = "UnsubscribeConfirmation";
 })(AmazonMessageType || (AmazonMessageType = {}));
 class Provider {
-    constructor() {
+    constructor(isDevMode = false) {
+        this.isDevMode = isDevMode;
         this.providerName = 'amazon-sns';
         this.requiredFields = [
             'Message', 'MessageId', 'Signature', 'SignatureVersion', 'SigningCertURL', 'Timestamp', 'TopicArn', 'Type'
@@ -42,7 +43,9 @@ class Provider {
     }
     parse(message) {
         return __awaiter(this, void 0, void 0, function* () {
-            yield this.validateSignature(message);
+            if (!this.isDevMode) {
+                yield this.validateSignature(message);
+            }
             const result = new Message_1.Message();
             result.provider = this.providerName;
             result.id = message.MessageId;

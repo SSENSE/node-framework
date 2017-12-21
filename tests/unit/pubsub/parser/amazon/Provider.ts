@@ -177,6 +177,19 @@ describe('AmazonProvider', () => {
             expect(error).to.equal('Invalid message signature, message could have been altered');
         });
 
+        it('should not error if isDevMode is true, and messages signature is invalid', async() => {
+            const message = Object.assign({}, baseMessage);
+            const isDevMode = true;
+            const provider = new Provider(isDevMode);
+            let error: string = null;
+            try {
+                await provider.parse(message);
+            } catch (e) {
+                error = e.message;
+            }
+            expect(error).to.equal(null, 'error should be null because isDevMode is true');
+        });
+
         it('should call personalized parse function if present', async () => {
             const message = Object.assign({}, baseMessage);
             message.Message = 'foo';

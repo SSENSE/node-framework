@@ -130,9 +130,7 @@ For more information please check the [typescript definition file](https://githu
 
 ## Safe Shutdown Server
 
-Use this utility to wrap a standard server when creating servers in your application. It simply provides extra functionality to allow for safe shutdowns of the server. This can be useful when kubernetes makes requests to an application for graceful shutdown during autoscaling.
-
-Note that this utility can wrap both the Inversify Restify Server and the standard Express Server.
+Use this utility to wrap a standard Express Server when creating servers in your application. It simply provides extra functionality to allow for safe shutdowns of the server. This can be useful when kubernetes makes requests to an application for graceful shutdown during autoscaling.
 
 Example usage:
 

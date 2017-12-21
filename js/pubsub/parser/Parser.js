@@ -2,9 +2,9 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const Provider_1 = require("./amazon/Provider");
 class Parser {
-    constructor() {
+    constructor(isDevMode) {
         this.providers = [
-            new Provider_1.Provider()
+            new Provider_1.Provider(isDevMode)
         ];
     }
     setMessageParseFunction(func) {
