@@ -588,6 +588,7 @@ export class Exception extends Error {
     constructor(message: string, code?: string, details?: any);
 
     public static fromHttpCode(httpCode: number, message: string, code?: string, details?: any): Exception;
+    public toJSON(): {code: string, message: string, details?: any};
 }
 
 export class BadRequestException extends Exception {}

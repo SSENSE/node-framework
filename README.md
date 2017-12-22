@@ -91,7 +91,8 @@ code: string;
 details?: any;
 body: {code: string, message: string, details?: any};
 
-fromHttpCode(httpCode: number, message: string, code?: string, details?: any): Exception;
+static fromHttpCode(httpCode: number, message: string, code?: string, details?: any): Exception;
+toJSON(): {code: string, message: string, details?: any};
 ```
 
 ## Request Validation
@@ -130,7 +131,7 @@ For more information please check the [typescript definition file](https://githu
 
 ## Safe Shutdown Server
 
-Use this utility to wrap a standard Express Server when creating servers in your application. It simply provides extra functionality to allow for safe shutdowns of the server. This can be useful when kubernetes makes requests to an application for graceful shutdown during autoscaling.
+Use this utility to wrap a standard Express or Restify Server when creating servers in your application. It simply provides extra functionality to allow for safe shutdowns of the server. This can be useful when kubernetes makes requests to an application for graceful shutdown during autoscaling.
 
 Example usage:
 

@@ -40,6 +40,9 @@ class Base extends Error {
         }
         return exception;
     }
+    toJSON() {
+        return this.body;
+    }
 }
 exports.Base = Base;
 //# sourceMappingURL=Base.js.map

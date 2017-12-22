@@ -66,6 +66,17 @@ describe('Exceptions', () => {
                 expect(exception.code).to.equal('InternalError');
             });
         });
+
+        describe('toJSON()', () => {
+            it('should return the exception body', () => {
+                const exception = new Base('foo', 'bar');
+                expect(exception.statusCode).to.equal(500);
+                expect(exception.toJSON()).to.deep.equal({
+                    code: 'bar',
+                    message: 'foo'
+                });
+            });
+        });
     });
 
     describe('BadRequestException', () => {

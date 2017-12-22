@@ -49,4 +49,8 @@ export class Base extends Error {
 
         return exception;
     }
+
+    public toJSON(): {code: string, message: string, details?: any} {
+        return this.body;
+    }
 }
