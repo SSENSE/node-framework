@@ -571,6 +571,7 @@ export interface PubsubMessage {
 }
 
 export class PubsubParser {
+    constructor(isDevMode?: boolean);
     public setMessageParseFunction(func: (message: string) => string): void;
     public parse(message: any): Promise<PubsubMessage>;
 }
