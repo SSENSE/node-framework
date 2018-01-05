@@ -12,7 +12,7 @@ Base framework grouping all SSENSE's utilities for Node.js developers
 Download as a dependency using [npm](https://www.npmjs.com/).
 
 ```node
-npm install --save @sssense/framework
+npm install --save @ssense/framework
 ```
 
 ## Usage

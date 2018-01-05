@@ -1,6 +1,6 @@
 {
   "name": "@ssense/framework",
-  "version": "0.2.7",
+  "version": "0.2.8",
   "description": "Base framework regrouping all SSENSE's utilities for Node.js developers",
   "main": "./js",
   "typings": "index.d.ts",
@@ -40,6 +40,10 @@
     {
       "name": "Ashley Simpson",
       "email": "ashley.simpson@ssense.com"
+    },
+    {
+      "name": "Sam-Nicolai Johnston",
+      "email": "sam-nicolai.johnston@ssense.com"
     }
   ],
   "license": "MIT",
