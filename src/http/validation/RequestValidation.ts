@@ -13,6 +13,8 @@ export interface RequestValidationEntity {
 export interface RequestValidationParam {
     type: RequestValidationParamType; // tslint:disable-line:no-reserved-keywords
     required?: boolean;
+    requires?: string[];
+    mutuallyExcludes?: string[];
     min?: number;
     max?: number;
     length?: number;

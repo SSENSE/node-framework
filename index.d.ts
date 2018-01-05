@@ -345,6 +345,14 @@ export interface RequestValidationParam {
      */
     required?: boolean;
     /**
+     * List of params required by this param, default undefined
+     */
+    requires?: string[];
+    /**
+     * List of params that cannot be used in conjunction with this param, default undefined
+     */
+    mutuallyExcludes?: string[];
+    /**
      * Param min length (valid for types "string", "numeric", "number" and "array"), default undefined
      */
     min?: number;

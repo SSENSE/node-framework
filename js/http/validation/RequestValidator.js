@@ -90,6 +90,12 @@ class RequestValidator {
         if (param.regex instanceof RegExp) {
             result.regex = param.regex;
         }
+        if (Array.isArray(param.requires)) {
+            result.requires = param.requires;
+        }
+        if (Array.isArray(param.mutuallyExcludes)) {
+            result.mutuallyExcludes = param.mutuallyExcludes;
+        }
         if (typeof param.format === 'function') {
             result.format = param.format;
         }
@@ -137,6 +143,20 @@ class RequestValidator {
                 }
                 if (param.regex && !param.regex.test(value)) {
                     error.messages.push(`Value must match regex ${param.regex}`);
+                }
+                if (param.requires && param.requires.length > 0) {
+                    for (let i = 0; i < param.requires.length; i += 1) {
+                        if (entity[param.requires[i]] === undefined) {
+                            error.messages.push(`"${key}" requires "${param.requires[i]}" to be defined`);
+                        }
+                    }
+                }
+                if (param.mutuallyExcludes && param.mutuallyExcludes.length > 0) {
+                    for (let i = 0; i < param.mutuallyExcludes.length; i += 1) {
+                        if (entity[param.mutuallyExcludes[i]]) {
+                            error.messages.push(`"${key}" cannot be used with "${param.mutuallyExcludes[i]}"`);
+                        }
+                    }
                 }
                 if (param.format) {
                     entity[key] = param.format(entity[key]);

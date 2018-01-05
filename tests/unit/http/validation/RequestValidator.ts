@@ -409,6 +409,90 @@ describe('RequestValidator', () => {
                     }
                 ]);
             });
+
+            it('should return error if "b" & "c" are required by "a" and undefined', () => {
+                const next = sandbox.spy();
+                const validate = RequestValidator.validate({
+                    query: {
+                        a: {type: 'string', requires: ['b', 'c']},
+                        b: {type: 'string'},
+                        c: {type: 'string'},
+                    }
+                });
+
+                validate({query: {a: 'foo'}}, null, next);
+                expect(next.callCount).to.equal(1);
+                expect(next.lastCall.args[0].errors).to.deep.equal([
+                    {
+                        field: 'a',
+                        location: 'query',
+                        messages: ['"a" requires "b" to be defined', '"a" requires "c" to be defined']
+                    }
+                ]);
+            });
+
+            it('should return error if "b" is required by "a" and undefined', () => {
+                const next = sandbox.spy();
+                const validate = RequestValidator.validate({
+                    query: {
+                        a: {type: 'string', requires: ['b', 'c']},
+                        b: {type: 'string'},
+                        c: {type: 'string'},
+                    }
+                });
+
+                validate({query: {a: 'foo', b: 'bar'}}, null, next);
+                expect(next.callCount).to.equal(1);
+                expect(next.lastCall.args[0].errors).to.deep.equal([
+                    {
+                        field: 'a',
+                        location: 'query',
+                        messages: ['"a" requires "c" to be defined']
+                    }
+                ]);
+            });
+
+            it('should return error if "a" and "b" & "a" and "c" are mutually exclusive and all are defined', () => {
+                const next = sandbox.spy();
+                const validate = RequestValidator.validate({
+                    query: {
+                        a: {type: 'string', mutuallyExcludes: ['b', 'c']},
+                        b: {type: 'string'},
+                        c: {type: 'string'},
+                    }
+                });
+
+                validate({query: {a: 'foo', b: 'bar', c: 'zar'}}, null, next);
+                expect(next.callCount).to.equal(1);
+                expect(next.lastCall.args[0].errors).to.deep.equal([
+                    {
+                        field: 'a',
+                        location: 'query',
+                        messages: ['"a" cannot be used with "b"', '"a" cannot be used with "c"']
+                    }
+                ]);
+            });
+
+            it('should return error if "a" and "b" & "a" and "c" are mutually exclusive and "b" is defined', () => {
+                const next = sandbox.spy();
+                const validate = RequestValidator.validate({
+                    query: {
+                        a: {type: 'string', mutuallyExcludes: ['b', 'c']},
+                        b: {type: 'string'},
+                        c: {type: 'string'},
+                    }
+                });
+
+                validate({query: {a: 'foo', b: 'bar'}}, null, next);
+                expect(next.callCount).to.equal(1);
+                expect(next.lastCall.args[0].errors).to.deep.equal([
+                    {
+                        field: 'a',
+                        location: 'query',
+                        messages: ['"a" cannot be used with "b"']
+                    }
+                ]);
+            });
         });
 
         describe('Request params formatting', () => {

@@ -112,6 +112,18 @@ const validation: RequestValidation = {
         country: {
             type: 'string',
             required: true
+        },
+        a: {
+            type: 'string',
+        },
+        b: {
+            type: 'number',
+            requires: ['a'],
+            mutuallyExcludes: ['c']
+        },
+        c: {
+            type: 'string',
+            requires: ['a']
         }
     }
 };
