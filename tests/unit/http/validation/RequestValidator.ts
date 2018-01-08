@@ -426,7 +426,7 @@ describe('RequestValidator', () => {
                     {
                         field: 'a',
                         location: 'query',
-                        messages: ['"a" requires "b" to be defined', '"a" requires "c" to be defined']
+                        messages: ['Field requires \'b\' to be defined', 'Field requires \'c\' to be defined']
                     }
                 ]);
             });
@@ -447,7 +447,7 @@ describe('RequestValidator', () => {
                     {
                         field: 'a',
                         location: 'query',
-                        messages: ['"a" requires "c" to be defined']
+                        messages: ['Field requires \'c\' to be defined']
                     }
                 ]);
             });
@@ -468,7 +468,7 @@ describe('RequestValidator', () => {
                     {
                         field: 'a',
                         location: 'query',
-                        messages: ['"a" cannot be used with "b"', '"a" cannot be used with "c"']
+                        messages: ['Field cannot be used with \'b\'', 'Field cannot be used with \'c\'']
                     }
                 ]);
             });
@@ -489,7 +489,7 @@ describe('RequestValidator', () => {
                     {
                         field: 'a',
                         location: 'query',
-                        messages: ['"a" cannot be used with "b"']
+                        messages: ['Field cannot be used with \'b\'']
                     }
                 ]);
             });
