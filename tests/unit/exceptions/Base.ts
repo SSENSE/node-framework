@@ -65,6 +65,18 @@ describe('Exceptions', () => {
                 expect(exception.statusCode).to.equal(500);
                 expect(exception.code).to.equal('InternalError');
             });
+
+            it('should return a typed Exception based on HTTP code if existing', () => {
+                let exception = Base.fromHttpCode(400, 'foobar');
+                expect(exception.statusCode).to.equal(400);
+                expect(exception.code).to.equal('BadRequest');
+                expect(exception).to.be.an.instanceOf(BadRequestException);
+
+                exception = Base.fromHttpCode(403, 'foobar');
+                expect(exception.statusCode).to.equal(403);
+                expect(exception.code).to.equal('Forbidden');
+                expect(exception).to.be.an.instanceOf(ForbiddenException);
+            });
         });
 
         describe('toJSON()', () => {
