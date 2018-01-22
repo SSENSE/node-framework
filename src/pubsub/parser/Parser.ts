@@ -11,7 +11,7 @@ export class Parser {
         ];
     }
 
-    public setMessageParseFunction(func: (message: string) => string): void {
+    public setMessageParseFunction(func: (message: string) => any): void {
         this.providers.forEach(p => {
             p.setMessageParseFunction(func);
         });

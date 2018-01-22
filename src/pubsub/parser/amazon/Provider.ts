@@ -36,9 +36,9 @@ export class Provider implements BaseProvider {
 
     constructor(private isDevMode: boolean = false) { }
 
-    private messageParseFunction: (message: string) => string;
+    private messageParseFunction: (message: string) => any;
 
-    public setMessageParseFunction(func: (message: string) => string): void {
+    public setMessageParseFunction(func: (message: string) => any): void {
         this.messageParseFunction = func;
     }
 
