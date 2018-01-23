@@ -412,7 +412,7 @@ describe('HttpClient', () => {
             });
         });
 
-        it('should not fail when trying to JSON response if invalid and return body as a string instead', async () => {
+        it('should not fail when trying to parse JSON response if invalid and return body as a string instead', async () => {
             nock('https://www.foo.bar').post('/baz').reply(200, '{', {bar: 'foo'});
             const client = new Client({
                 host: 'www.foo.bar',
