@@ -457,6 +457,164 @@ export class FieldValidationError {
     constructor(field: string, location: string);
 }
 
+/**
+ * HTTP client type, can be either:
+ * * Json: will send HTTP requests with body as JSON object if provided
+ * * UrlEncodedForm: will send HTTP requests with URL-Encoded Forms params if provided (application/x-www-form-urlencoded)
+ */
+export enum HttpClientType {
+    Json,
+    UrlEncodedForm
+}
+
+export interface HttpClientOptions {
+    /**
+     * Host on which perform all requests for this client, ex: www.google.com
+     */
+    host: string;
+    /**
+     * User agent to send as a header when performing each request
+     */
+    userAgent: string;
+    /**
+     * Port on which requests will be sent (default 80 if "secure" param is set to false, or 443 if true)
+     */
+    port?: number;
+    /**
+     * Use secure mode, if set to true, all requests will use https scheme, else http (default false)
+     */
+    secure?: boolean;
+    /**
+     * Number in milliseconds after which all requests will timeout (default 5000)
+     */
+    timeout?: number;
+    /**
+     * Number indicating how many times a request should be retried on failure (default 0)
+     */
+    retries?: number;
+    /**
+     * Valid HttpClientType, default Json
+     */
+    clientType?: HttpClientType;
+    /**
+     * Enable keep alive for this client, to improve requests performance, default true
+     */
+    keepAlive?: boolean;
+    /**
+     * Reset kept alive sockets after given number of milliseconds (useful to discover new hosts in a load balanced environment)
+     * Only used if keepAlive is true, default 60000
+     */
+    keepAliveRefresh?: number;
+}
+
+export type HttpRequestMethod = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+export interface HttpRequestStatus {
+    /**
+     * Request HTTP request method
+     */
+    method: HttpRequestMethod;
+    /**
+     * Request full url
+     */
+    url: string;
+    /**
+     * Request id (useful for debug purposes)
+     */
+    requestId: string;
+    /**
+     * Number of attempt (in case the requests fails and is retried)
+     */
+    attempt: number;
+    /**
+     * Request duration in milliseconds
+     */
+    duration: number;
+    /**
+     * Error message, only present if an error occurred during the request
+     */
+    errorMessage?: string;
+}
+
+export interface HttpRequestStatusCallback {
+    /**
+     * Callback interface that will be called after each request
+     */
+    (status: HttpRequestStatus): void;
+}
+
+export interface HttpHeaders {
+    [name: string]: string | string[];
+}
+
+export interface HttpRequestOptions {
+    /**
+     * Body to send with the request
+     */
+    body?: any;
+    /**
+     * Extra HTTP headers to send with the request
+     */
+    headers?: HttpHeaders;
+}
+
+export interface HttpRequestResponse {
+    /**
+     * Response HTTP status code
+     */
+    statusCode: number;
+    /**
+     * Response HTTP headers
+     */
+    headers: HttpHeaders;
+    /**
+     * Response body, will be JSON parsed if valid JSON content, or raw string if not
+     */
+    body: any;
+}
+
+export class HttpClient {
+    /**
+     * Host on which perform all requests for this client, ex: www.google.com
+     */
+    protected host: string;
+    /**
+     * User agent to send as a header when performing each request
+     */
+    protected userAgent: string;
+    /**
+     * Number in milliseconds after which all requests will timeout (default 5000)
+     */
+    protected timeout: number;
+    /**
+     * Number indicating how many times a request should be retried on failure (default 0)
+     */
+    protected retries: number;
+    /**
+     * Valid HttpClientType, default Json
+     */
+    protected clientType: HttpClientType;
+
+    /**
+     * Create a new instance of HTTP client
+     * @param options Valid HttpClientOptions object
+     */
+    constructor(options: HttpClientOptions);
+    /**
+     * Add a callback tht will be called after each request (even on failure), useful to implement a logger for example
+     * @param callback A function implementing the HttpRequestStatusCallback interface
+     */
+    public afterRequest(callback: HttpRequestStatusCallback): void;
+    /**
+     * Send an HTTP request
+     * @param requestId Unique identifier for this request (useful for debug purposes)
+     * @param path Path on which perform the query
+     * @param method Valid HttpRequestMethod, default "GET"
+     * @param options Valid HttpRequestOptions
+     */
+    public sendRequest(requestId: string, path: string, method?: HttpRequestMethod, options?: HttpRequestOptions): Promise<HttpRequestResponse>;
+}
+
 export class SlackNotifier {
     /**
      * Create an helper that sends slack messages

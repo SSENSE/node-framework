@@ -39,11 +39,11 @@ This utility handles setting up a redis connection within your microservice. To 
 import { RedisConnection } from '@ssense/framework';
 
 const redisConfig = {
-    host: config.get<string>('cache.host'),
-    port: config.get<number>('cache.port'),
-    db: config.get<number>('cache.database'),
-    password: config.get<string>('cache.password'),
-    separator: config.get<string>('cache.separator')
+    host: 'localhost',
+    port: 6379,
+    db: 0,
+    password: 'password',
+    separator: ':'
 };
 
 const cache = new RedisConnection(redisConfig);
@@ -141,6 +141,39 @@ validate(req, res, (err?: Error) => {
 
 For more information please check the [typescript definition file](https://github.com/SSENSE/node-framework/blob/master/index.d.ts).
 
+## HTTP client
+
+Tool that allows to perform HTTP requests and retrive responses in a simple way. It handles JSON requests (by default) and URL-Encoded forms (application/x-www-form-urlencoded).  
+JSON responses are automatically parsed into plain javascript objects.
+
+Example usage:
+
+```typescript
+import { HttpClient, HttpClientType } from '@ssense/framework';
+
+// Fields 'host' and 'userAgent' are the only required ones, all the others are optional
+const client = new HttpClient({
+    host: 'www.ssense.com',
+    userAgent: 'my-user-agent',
+    port?: 443,
+    secure?: true,
+    timeout?: 5000,
+    retries?: 1,
+    clientType?: HttpClientType.Json,
+    keepAlive?: true,
+    keepAliveRefresh?: 60000
+});
+
+const response = await client.sendRequest('requestId', 'en-ca/men');
+```
+
+In the example above, `response` is an object containing the following fields:
+* statusCode: HTTP status code received
+* headers: A key/value object containing the response headers
+* body: The response body as a string or plain javascript object if valid JSON
+
+For more information and additional methods please check the [typescript definition file](https://github.com/SSENSE/node-framework/blob/master/index.d.ts).
+
 ## Safe Shutdown Server
 
 Use this utility to wrap a standard Express or Restify Server when creating servers in your application. It simply provides extra functionality to allow for safe shutdowns of the server. This can be useful when kubernetes makes requests to an application for graceful shutdown during autoscaling.
@@ -172,11 +205,11 @@ import { SlackNotifier } from '@ssense/framework';
 const slackBot = ((): SlackNotifier => {
     try {
         return new SlackNotifier(
-                <string> config.get('slack.webHookUrl'),
-                <string> config.get('slack.defaultChannel'),
-                <string> config.get('slack.username'),
-                ':troll:'
-            );
+            'https://hooks.slack.com/services/123456/123456456/123456487897',
+            '#channel',
+            'slackbot',
+            ':troll:'
+        );
     } catch (err) {
         // some error with slack notifier creation
     }
@@ -203,7 +236,7 @@ import {
 
 const logger: Logger = new AppLogger(
     'microservice name',
-    <LogLevel> config.get('logger.level'),
+    LogLevel.Info),
     optionalStreamObject
 );
 
@@ -262,14 +295,14 @@ The mongo connection utility allows you to setup a connection with mongo in the 
 import { MongoConnection } from '@ssense/framework';
 
 new MongoConnection({
-    database: config.get<string>('database.mongodb.database'),
-    connectionString: config.get<string>('database.mongodb.connectionString'),
-    shardedCluster: config.get<boolean>('database.mongodb.shardedCluster'),
-    readPreference: config.get<any>('database.mongodb.readPreference'),
-    replicaSetName: config.get<string>('database.mongodb.replicaSetName'),
-    username: config.get<string>('database.mongodb.username'),
-    password: config.get<string>('database.mongodb.password'),
-    debug: mongoDebug
+    database: 'my-database',
+    connectionString: 'mydb.myhost.com.com:27017',
+    shardedCluster: false,
+    readPreference: 'nearest',
+    replicaSetName: 'my-replicaset',
+    username: 'username',
+    password: 'password',
+    debug: true
 });
 ```
 
