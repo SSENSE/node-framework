@@ -1,3 +1,5 @@
+# Contributing
+
 Before submitting a pull request, please check that you respect the following rules:
 
 * Generate the compiled js files by running `npm run build` locally, these files need to be part of your PR.

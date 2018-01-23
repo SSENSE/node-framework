@@ -324,21 +324,41 @@ Parser example usage:
 ```typescript
 import { PubsubParser } from '@ssense/framework';
 
+const pubsubPayload = {
+    "Message" : "some message (for example a base 64 encoded string)",
+    "TopicArn": "arn:aws:sns:us-west-2:Cart.Cart.Updated",
+    "MessageId": "some message Id",
+    "Signature": "some signature",
+    "SignatureVersion": "some signature version",
+    "SigningCertURL": "some signing cert url",
+    "Timestamp": "some timestamp",
+    "Type": "some type",
+    "SubscribeURL": "some subscribe url",
+    "unsubscribeUrl": "some unsubscribeUrl"
+}
+
 // takes optional boolean parameter isDevMode to prevent validating message in development
 // isDevMode is false by default, set to true to prevent validation
 const pubsub = new PubsubParser();
 
-const parsedPubsubMessage = pubsub.parse(pubSubEmitPayload);
+// allows the user to set a parsing function for the message that is passed in as property Message
+pubsubParser.setMessageParseFunction((message: string) => JSON.parse(Buffer.from(message, 'base64').toString()));
 
-// Example properties:
+const parsedPubsubMessage = pubsub.parse(pubsubPayload); // Will validate the payload and if valid will return an object
 
-// provider: string
-// id: string
-// topic: string
-// date: Date
-// data: any
-// isSubscription: boolean
-// isUnsubscription: boolean
+// Example object properties:
+
+// provider: string -> the provider name ex: 'amazon-sns'
+// id: string -> MessageId (from payload)
+// topic: string -> modified TopicArn (from payload), ex: '"arn:aws:sns:us-west-2:Cart.Cart.Updated" -> "Cart.Cart.Updated"
+// date: Date -> Timestamp converted to Date object (from payload)
+// data: any -> Message (from payload), will be parsed based on the setMessageParseFunction set, otherwise will just be the Message
+// isSubscription: boolean -> Depends on Type
+// isUnsubscription: boolean -> Depends on Type
+// ...
+// subscribeUrl and unsubscribeUrls will be set via a helper if in the emit payload
+// then the functions subscribeToTopic() and unsubscribeFromTopic() will execute properly
+
 ```
 
 ## Contributing
