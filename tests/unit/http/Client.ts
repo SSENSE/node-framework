@@ -135,13 +135,15 @@ describe('HttpClient', () => {
 
         it('should switch between basic and secure keep alive agents depending on options', () => {
             const spy = sandbox.stub(KeepAliveAgent, 'HttpsAgent');
-            let client = new TestClient({
+            // tslint:disable-next-line:no-unused-expression
+            new TestClient({
                 host: 'www.foo.bar',
                 userAgent: 'foo'
             });
             expect(spy.callCount).to.equal(0);
 
-            client = new TestClient({
+            // tslint:disable-next-line:no-unused-expression
+            new TestClient({
                 host: 'www.foo.bar',
                 userAgent: 'foo',
                 secure: true
