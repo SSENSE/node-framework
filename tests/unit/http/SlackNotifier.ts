@@ -14,10 +14,12 @@ describe('SlackNotifier', () => {
             // tslint:disable-next-line:max-line-length
             expect(() => new SlackNotifier('foo', null, null)).to.throw('webHookUrl must be a valid string starting with "https://hooks.slack.com"');
             const url = 'https://hooks.slack.com/foo';
-            expect(() => new SlackNotifier(url, null, null)).to.throw('defaultChannel must be a valid string starting with "#"');
-            expect(() => new SlackNotifier(url, 'foo', null)).to.throw('defaultChannel must be a valid string starting with "#"');
+            expect(() => new SlackNotifier(url, null, null)).to.throw('defaultDestination must be a valid string starting with "#" or "@"');
+            expect(() => new SlackNotifier(url, 'foo', null)).to.throw(
+                'defaultDestination must be a valid string starting with "#" or "@"'
+            );
             expect(() => new SlackNotifier(url, '#foo', null)).to.throw('userName is required');
-            expect(() => new SlackNotifier(url, '#foo', '  ')).to.throw('userName is required');
+            expect(() => new SlackNotifier(url, '@foo', '  ')).to.throw('userName is required');
         });
     });
 
@@ -58,7 +60,7 @@ describe('SlackNotifier', () => {
             expect(error).to.equal(null, 'No error should have been thrown');
         });
 
-        it('should override default channel if a different channel is given in params', async () => {
+        it('should override default destination if a different destination is given in params', async () => {
             let reqBody: any = null;
             nock('https://hooks.slack.com').post('/foo').reply((uri, body) => {
                 reqBody = body;
@@ -67,6 +69,17 @@ describe('SlackNotifier', () => {
             const slack = new SlackNotifier('https://hooks.slack.com/foo', '#foo', 'bar');
             await slack.send('message', null, '#baz');
             expect(reqBody.channel).to.equal('#baz');
+        });
+
+        it('should throw an error if specific destination is invalid', async () => {
+            let error: string = null;
+            const slack = new SlackNotifier('https://hooks.slack.com/foo', '#foo', 'bar');
+            try {
+                await slack.send('message', null, '');
+            } catch (e) {
+                error = e.message;
+            }
+            expect(error).to.equal('destination must be a valid string starting with "#" or "@"');
         });
 
         it('should add message detail if given in params', async () => {

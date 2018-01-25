@@ -24,6 +24,7 @@ Currently the following is bundled into @ssense/framework:
 - Redis Cache
 - List of Common Exceptions
 - Request Validation
+- HTTP Client
 - Safe Shutdown Server
 - Slack Notifier
 - Logger
@@ -206,7 +207,7 @@ const slackBot = ((): SlackNotifier => {
     try {
         return new SlackNotifier(
             'https://hooks.slack.com/services/123456/123456456/123456487897',
-            '#channel',
+            '#channel', // You can send message to a user using "@user"
             'slackbot',
             ':troll:'
         );
