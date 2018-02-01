@@ -135,7 +135,7 @@ export class Redis implements Cache {
         return this.client.flushdb();
     }
 
-    public keys(match: string): Promise<string[]> {
-        return this.client.keys(match);
+    public keys(match: string|string[]): Promise<string[]> {
+        return this.client.keys(this.getKey(match));
     }
 }

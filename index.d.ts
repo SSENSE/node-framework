@@ -668,7 +668,7 @@ export interface Cache {
     setBuffer(key: string|string[], value: Buffer, ttl?: number): Promise<void>;
     del(key: string|string[]): Promise<void>;
     flush(): Promise<void>;
-    keys(match: string): Promise<string[]>;
+    keys(match: string|string[]): Promise<string[]>;
 }
 
 export interface RedisConnectionOptions {

@@ -276,11 +276,21 @@ describe('Redis', () => {
     });
 
     describe('keys()', () => {
-        it('should call keys method on base client', async () => {
+        it('should call keys method on base client with string parameter', async () => {
             sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
             const getKeysStub = sandbox.stub(ioredis.prototype, 'keys').returns(['foo:1', 'foo:2']);
             const cache = new Redis({host: 'foo'});
             const result = await cache.keys('foo:*');
+            expect(getKeysStub.callCount).to.equal(1);
+            expect(getKeysStub.lastCall.args).to.deep.equal(['foo:*']);
+            expect(result).to.deep.equal(['foo:1', 'foo:2']);
+        });
+
+        it('should call keys method on base client with string[] parameter', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const getKeysStub = sandbox.stub(ioredis.prototype, 'keys').returns(['foo:1', 'foo:2']);
+            const cache = new Redis({host: 'foo'});
+            const result = await cache.keys(['foo', '*']);
             expect(getKeysStub.callCount).to.equal(1);
             expect(getKeysStub.lastCall.args).to.deep.equal(['foo:*']);
             expect(result).to.deep.equal(['foo:1', 'foo:2']);

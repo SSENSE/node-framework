@@ -5,5 +5,5 @@ export interface Cache {
     set<T>(key: string|string[], value: T, ttl?: number): Promise<void>; // tslint:disable-line:no-reserved-keywords
     del(key: string|string[]): Promise<void>;
     flush(): Promise<void>;
-    keys(match: string): Promise<string[]>;
+    keys(match: string|string[]): Promise<string[]>;
 }

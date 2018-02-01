@@ -115,7 +115,7 @@ class Redis {
         return this.client.flushdb();
     }
     keys(match) {
-        return this.client.keys(match);
+        return this.client.keys(this.getKey(match));
     }
 }
 exports.Redis = Redis;

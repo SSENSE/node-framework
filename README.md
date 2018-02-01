@@ -65,7 +65,7 @@ set<T>(key: string|string[], value: T, ttl?: number): Promise<void>;
 setBuffer(key: string|string[], value: Buffer, ttl?: number): Promise<void>;
 del(key: string|string[]): Promise<void>;
 flush(): Promise<void>;
-keys(match: string): Promise<string[]>;
+keys(match: string|string[]): Promise<string[]>;
 ```
 
 Refer to [ioredis](https://github.com/luin/ioredis) for more information on the functions get, getTtl, getBuffer, set, setBuffer, del, flush and keys. For getSeparator and setSeparator you simply have the ability to get and set the seperator between key parts (by default the seperator is ':'), therefore you can supply an array of key parts to all functions instead of creating the key yourself. onError is a way to set the callback when errors occurs on the redis side.
