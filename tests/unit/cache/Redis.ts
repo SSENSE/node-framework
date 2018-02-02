@@ -180,6 +180,32 @@ describe('Redis', () => {
         });
     });
 
+    describe('incrby()', () => {
+        it('should call incrby method on base client and return a number', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const incrbyStub = sandbox.stub(ioredis.prototype, 'incrby').returns(2);
+            const cache = new Redis({host: 'foo'});
+            expect(await cache.incrby('foo', 1)).to.equal(2);
+            expect(incrbyStub.callCount).to.equal(1);
+            expect(incrbyStub.lastCall.args).to.deep.equal(['foo', 1]);
+        });
+
+        it('should throw error if adding to a key that is non numeric', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            sandbox.stub(ioredis.prototype, 'incrby').throws(new Error('foo'));
+            const cache = new Redis({host: 'foo'});
+            let error: Error;
+
+            try {
+                await cache.incrby(['foo', 'bar'], 1);
+            } catch (e) {
+                error = e;
+            }
+
+            expect(error.message).to.equal('foo');
+        });
+    });
+
     describe('del()', () => {
         it('should call del method on base client', async () => {
             sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());

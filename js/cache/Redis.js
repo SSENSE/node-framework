@@ -80,6 +80,9 @@ class Redis {
             return this.client.set(realKey, value);
         }
     }
+    incrby(key, value) {
+        return this.client.incrby(this.getKey(key), value);
+    }
     del(key) {
         const cacheKey = this.getKey(key);
         if (cacheKey.indexOf('*') >= 0) {

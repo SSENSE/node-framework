@@ -3,6 +3,7 @@ export interface Cache {
     getTtl(key: string|string[]): Promise<number>;
     getBuffer(key: string|string[]): Promise<Buffer>;
     set<T>(key: string|string[], value: T, ttl?: number): Promise<void>; // tslint:disable-line:no-reserved-keywords
+    incrby(key: string|string[], value: number): Promise<number>;
     del(key: string|string[]): Promise<void>;
     flush(): Promise<void>;
     keys(match: string|string[]): Promise<string[]>;

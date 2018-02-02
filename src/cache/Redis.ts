@@ -96,6 +96,10 @@ export class Redis implements Cache {
         }
     }
 
+    public incrby(key: string|string[], value: number): Promise<number> {
+        return this.client.incrby(this.getKey(key), value);
+    }
+
     public del(key: string|string[]): Promise<void> {
         const cacheKey = this.getKey(key);
 
