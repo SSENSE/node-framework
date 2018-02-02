@@ -7,4 +7,5 @@ export interface Cache {
     del(key: string|string[]): Promise<void>;
     flush(): Promise<void>;
     keys(match: string|string[]): Promise<string[]>;
+    pipeline(commands: string[][]): Promise<string[][]>;
 }

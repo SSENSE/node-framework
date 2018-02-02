@@ -120,6 +120,9 @@ class Redis {
     keys(match) {
         return this.client.keys(this.getKey(match));
     }
+    pipeline(commands) {
+        return this.client.pipeline(commands).exec();
+    }
 }
 exports.Redis = Redis;
 //# sourceMappingURL=Redis.js.map

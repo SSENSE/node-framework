@@ -142,4 +142,8 @@ export class Redis implements Cache {
     public keys(match: string|string[]): Promise<string[]> {
         return this.client.keys(this.getKey(match));
     }
+
+    public pipeline(commands: string[][]): Promise<string[][]> {
+        return this.client.pipeline(commands).exec();
+    }
 }

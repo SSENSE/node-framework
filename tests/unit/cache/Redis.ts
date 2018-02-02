@@ -332,4 +332,35 @@ describe('Redis', () => {
             expect(result).to.deep.equal([]);
         });
     });
+
+    describe('pipeline()', () => {
+        it('should call pipeline method on base client with 2d string array parameter', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const cache = new Redis({host: 'foo'});
+            const pipelineStub = sandbox.stub(ioredis.prototype, 'pipeline').returns({
+                exec: () => {
+                    return Promise.resolve([[null, 'OK'], [null, 'bar']]);
+                }
+            });
+            const result = await cache.pipeline([['set', 'foo', 'bar'], ['get', 'foo']]);
+            expect(pipelineStub.callCount).to.equal(1);
+            expect(pipelineStub.lastCall.args[0]).to.deep.equal([['set', 'foo', 'bar'], ['get', 'foo']]);
+            expect(result).to.deep.equal([[null, 'OK'], [null, 'bar']], 'should return correct results');
+        });
+
+        it('should throw error if pipeline does not accept commands', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const cache = new Redis({host: 'foo'});
+            sandbox.stub(ioredis.prototype, 'pipeline').throws(new Error('some error'));
+            let error: Error;
+
+            try {
+                await cache.pipeline([['badcommand', 'foo', 'bar'], ['get', 'foo']]);
+            } catch (e) {
+                error = e;
+            }
+
+            expect(error.message).to.equal('some error');
+        });
+    });
 });

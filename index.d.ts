@@ -670,6 +670,7 @@ export interface Cache {
     del(key: string|string[]): Promise<void>;
     flush(): Promise<void>;
     keys(match: string|string[]): Promise<string[]>;
+    pipeline(commands: string[][]): Promise<string[][]>;
 }
 
 export interface RedisConnectionOptions {
@@ -696,6 +697,7 @@ export class RedisConnection implements Cache {
     public del(key: string|string[]): Promise<void>;
     public flush(): Promise<void>;
     public keys(match: string|string[]): Promise<string[]>;
+    public pipeline(commands: string[][]): Promise<string[][]>;
 }
 
 //////////////////
