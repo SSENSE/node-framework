@@ -80,6 +80,9 @@ class Redis {
             return this.client.set(realKey, value);
         }
     }
+    expire(key, timeout) {
+        return this.client.expire(this.getKey(key), timeout);
+    }
     incrby(key, value) {
         return this.client.incrby(this.getKey(key), value);
     }

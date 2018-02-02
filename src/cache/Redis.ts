@@ -96,6 +96,10 @@ export class Redis implements Cache {
         }
     }
 
+    public expire(key: string|string[], timeout: number): Promise<number> {
+        return this.client.expire(this.getKey(key), timeout);
+    }
+
     public incrby(key: string|string[], value: number): Promise<number> {
         return this.client.incrby(this.getKey(key), value);
     }

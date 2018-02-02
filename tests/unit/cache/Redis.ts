@@ -180,6 +180,34 @@ describe('Redis', () => {
         });
     });
 
+    describe('expire()', () => {
+        it('should call expire method on base client and returns a number', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const expireStub = sandbox.stub(ioredis.prototype, 'expire').returns(1);
+            const cache = new Redis({host: 'foo'});
+            expect(await cache.expire('foo', 10)).to.equal(1);
+            expect(expireStub.callCount).to.equal(1);
+            expect(expireStub.lastCall.args).to.deep.equal(['foo', 10]);
+        });
+
+        it('should throw error if ttl is not an integer', async () => {
+            sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
+            const expireStub = sandbox.stub(ioredis.prototype, 'expire').throws(new Error('foo'));
+            const cache = new Redis({host: 'foo'});
+            let error: Error;
+
+            try {
+                await cache.expire(['foo', '*'], null);
+            } catch (e) {
+                error = e;
+            }
+
+            expect(expireStub.callCount).to.equal(1);
+            expect(expireStub.lastCall.args).to.deep.equal(['foo:*', null], 'should be passed the correct args');
+            expect(error.message).to.equal('foo');
+        });
+    });
+
     describe('incrby()', () => {
         it('should call incrby method on base client and return a number', async () => {
             sandbox.stub(ioredis.prototype, 'connect').returns(Promise.resolve());
