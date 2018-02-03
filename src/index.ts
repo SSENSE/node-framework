@@ -22,6 +22,9 @@ import { Connection as MongoConnection, ConnectionOptions as MongoConnectionOpti
 import { Cache } from './cache/Cache';
 import { Redis as RedisConnection, ConnectionOptions as RedisConnectionOptions } from './cache/Redis';
 
+// MySQL
+import { Connection as MysqlConnection, ConnectionOptions as MysqlConnectionOptions } from './mysql/Connection';
+
 // Pubsub
 import { Emitter as PubsubEmitter, EmitterOptions as PubsubEmitterOptions } from './pubsub/Emitter';
 import { Parser as PubsubParser } from './pubsub/parser/Parser';
@@ -47,6 +50,8 @@ export {
     MongoConnection, MongoConnectionOptions,
     // Cache / Redis
     Cache, RedisConnection, RedisConnectionOptions,
+    // MySQL
+    MysqlConnection, MysqlConnectionOptions,
     // Pubsub
     PubsubEmitter, PubsubEmitterOptions, PubsubParser, PubsubMessage,
     // Exceptions

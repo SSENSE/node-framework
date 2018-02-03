@@ -29,6 +29,7 @@ Currently the following is bundled into @ssense/framework:
 - Slack Notifier
 - Logger
 - Mongo Connection
+- MySQL Connection
 - Promise Pool
 - PubSub Emitter and Parser
 
@@ -311,6 +312,27 @@ new MongoConnection({
 ```
 
 With this you have access to functions connect, disconnect and getModel.
+
+For more information please check the code for specific implementation details.
+
+## MySQL Connection
+
+The MySQL connection utility allows you to setup a connection with MySQL in the following way:
+
+```typescript
+import { MysqlConnection } from '@ssense/framework';
+
+new MysqlConnection({
+    host: 'localhost',
+    database: 'database',
+    port?: 3306,
+    user?: 'user',
+    password?: 'password',
+    connectionLimit?: 10
+});
+```
+
+With this you have access to a `query` function, which allows you to execute SQL queries on the configured server.
 
 For more information please check the code for specific implementation details.
 

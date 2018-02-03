@@ -702,6 +702,47 @@ export class RedisConnection implements Cache {
     public pipeline(commands: string[][]): Promise<string[][]>;
 }
 
+/////////////////
+// MySQL utils //
+/////////////////
+export interface MysqlConnectionOptions {
+    /**
+     * MySQL server host
+     */
+    host: string;
+    /**
+     * MySQL database
+     */
+    database: string;
+    /**
+     * MySQL port (default: 3306)
+     */
+    port?: number;
+    /**
+     * MySQL username (default: null)
+     */
+    user?: string;
+    /**
+     * MySQL password (default: null)
+     */
+    password?: string;
+    /**
+     * Maximum number of parallel connections in internal MySQL connection pool (default: 10)
+     */
+    connectionLimit?: number;
+}
+
+export class MysqlConnection {
+    constructor(options?: MysqlConnectionOptions);
+
+    /**
+     * Send a query to MySQL server and return a result
+     * @param sql SQL query
+     * @param params SQL query params for a query with parameters (will be protected against SQL injections)
+     */
+    public query(sql: string, params?: any[]): Promise<any>;
+}
+
 //////////////////
 // Pubsub utils //
 //////////////////
