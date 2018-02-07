@@ -110,4 +110,80 @@ describe('MysqlConnection', () => {
             expect(queryStub.lastCall.args[0]).to.equal('query');
         });
     });
+
+    describe('runInTransaction()', () => {
+        it('should fail and not rollback the transaction if not started when the callback function throws an error', async () => {
+            sandbox.stub(mysql, <any> 'createPool').returns(pool);
+            sandbox.stub(pool, <any> 'getConnection').callsFake((cb: (err: Error, connection: any) => void) => {
+                cb(null, poolConnection);
+            });
+            const releaseStub = sandbox.stub(poolConnection, <any> 'release');
+            const queryStub = sandbox.stub(poolConnection, <any> 'query').callsFake(
+                (sql: string, params: any[], cb: (err: Error, result: any) => void) => {
+                    cb(new Error('Foo'), null);
+                }
+            );
+            const connection = new MysqlConnection({host: 'a', database: 'b'});
+            let error: string = null;
+            try {
+                await connection.runInTransaction(async () => {
+                    return 'Baz';
+                });
+            } catch (e) {
+                error = e.message;
+            }
+            expect(releaseStub.callCount).to.equal(1);
+            expect(queryStub.callCount).to.equal(1);
+            expect(queryStub.lastCall.args[0]).to.equal('START TRANSACTION;');
+            expect(error).to.equal('Foo');
+        });
+
+        it('should fail and rollback the transaction if started when the callback function throws an error', async () => {
+            sandbox.stub(mysql, <any> 'createPool').returns(pool);
+            sandbox.stub(pool, <any> 'getConnection').callsFake((cb: (err: Error, connection: any) => void) => {
+                cb(null, poolConnection);
+            });
+            const releaseStub = sandbox.stub(poolConnection, <any> 'release');
+            const queryStub = sandbox.stub(poolConnection, <any> 'query').callsFake(
+                (sql: string, params: any[], cb: (err: Error, result: any) => void) => {
+                    cb(null, 'result');
+                }
+            );
+            const connection = new MysqlConnection({host: 'a', database: 'b'});
+            let error: string = null;
+            try {
+                await connection.runInTransaction(async (transaction) => {
+                    await transaction.query('FOO');
+                    throw new Error('Bar');
+                });
+            } catch (e) {
+                error = e.message;
+            }
+            expect(releaseStub.callCount).to.equal(1);
+            expect(queryStub.callCount).to.equal(3);
+            expect(queryStub.lastCall.args[0]).to.equal('ROLLBACK;');
+            expect(error).to.equal('Bar');
+        });
+
+        it('should commit the transaction and return result when the callback function succeeds', async () => {
+            sandbox.stub(mysql, <any> 'createPool').returns(pool);
+            sandbox.stub(pool, <any> 'getConnection').callsFake((cb: (err: Error, connection: any) => void) => {
+                cb(null, poolConnection);
+            });
+            const releaseStub = sandbox.stub(poolConnection, <any> 'release');
+            const queryStub = sandbox.stub(poolConnection, <any> 'query').callsFake(
+                (sql: string, params: any[], cb: (err: Error, result: any) => void) => {
+                    cb(null, 'result');
+                }
+            );
+            const connection = new MysqlConnection({host: 'a', database: 'b'});
+            const result = await connection.runInTransaction(async () => {
+                return 'Baz';
+            });
+            expect(releaseStub.callCount).to.equal(1);
+            expect(queryStub.callCount).to.equal(2);
+            expect(queryStub.lastCall.args[0]).to.equal('COMMIT;');
+            expect(result).to.equal('Baz');
+        });
+    });
 });

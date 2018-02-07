@@ -10,6 +10,30 @@ export interface ConnectionOptions {
     connectionLimit?: number;
 }
 
+export interface TransactionFunction {
+    (transaction: {query: (sql: string, params?: any[]) => Promise<any>}): Promise<any>;
+}
+
+class ConnectionWrapper {
+    constructor(private connection: PoolConnection, private releaseConnection: boolean) {}
+
+    public query(sql: string, params?: any[]): Promise<any> {
+        return new Promise<any>((resolve, reject) => {
+            this.connection.query(sql, params, (err, result) => {
+                if (this.releaseConnection) {
+                    this.connection.release();
+                }
+
+                if (err) {
+                    return reject(err);
+                }
+
+                resolve(result);
+            });
+        });
+    }
+}
+
 export class Connection {
     private pool: mysql.Pool;
 
@@ -43,21 +67,38 @@ export class Connection {
         });
     }
 
-    private executeQuery(connection: PoolConnection, sql: string, params?: any[]): Promise<any> {
-        return new Promise<any>((resolve, reject) => {
-            connection.query(sql, params, (err, result) => {
-                connection.release();
-
-                if (err) {
-                    return reject(err);
-                }
-
-                resolve(result);
-            });
-        });
+    public async query(sql: string, params?: any[]): Promise<any> {
+        return new ConnectionWrapper(await this.getPoolConnection(), true).query(sql, params);
     }
 
-    public async query(sql: string, params?: any[]): Promise<any> {
-        return this.executeQuery(await this.getPoolConnection(), sql, params);
+    public async runInTransaction(callback: TransactionFunction): Promise<any> {
+        // Get connection from pool
+        const connection = await this.getPoolConnection();
+        // Get connection wrapper
+        const wrapper = new ConnectionWrapper(connection, false);
+
+        let transactionStarted = false;
+
+        try {
+
+            // Start transaction
+            await wrapper.query('START TRANSACTION;');
+            transactionStarted = true;
+
+            // Execute user callback
+            const result = await Promise.resolve(callback(wrapper));
+
+            // Commit transaction
+            await wrapper.query('COMMIT;');
+
+            return result;
+        } catch (e) {
+            if (transactionStarted) {
+                await wrapper.query('ROLLBACK;');
+            }
+            throw e;
+        } finally {
+            connection.release();
+        }
     }
 }

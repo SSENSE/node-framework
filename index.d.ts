@@ -732,6 +732,10 @@ export interface MysqlConnectionOptions {
     connectionLimit?: number;
 }
 
+export interface MysqlTransactionFunction {
+    (transaction: {query: (sql: string, params?: any[]) => Promise<any>}): Promise<any>;
+}
+
 export class MysqlConnection {
     constructor(options?: MysqlConnectionOptions);
 
@@ -741,6 +745,12 @@ export class MysqlConnection {
      * @param params SQL query params for a query with parameters (will be protected against SQL injections)
      */
     public query(sql: string, params?: any[]): Promise<any>;
+
+    /**
+     * Execute a list of statements in a MySQL transactional way, managing the transaction (begin, commit, rollback) automatically
+     * @param callback Function in which all the MySQL statements can be executed (will be run in a MySQL transaction)
+     */
+    public runInTransaction(callback: MysqlTransactionFunction): Promise<any>;
 }
 
 //////////////////

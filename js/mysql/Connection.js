@@ -9,6 +9,25 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const mysql = require("mysql");
+class ConnectionWrapper {
+    constructor(connection, releaseConnection) {
+        this.connection = connection;
+        this.releaseConnection = releaseConnection;
+    }
+    query(sql, params) {
+        return new Promise((resolve, reject) => {
+            this.connection.query(sql, params, (err, result) => {
+                if (this.releaseConnection) {
+                    this.connection.release();
+                }
+                if (err) {
+                    return reject(err);
+                }
+                resolve(result);
+            });
+        });
+    }
+}
 class Connection {
     constructor(options) {
         if (!options || !options.host || typeof options.host !== 'string' || options.host.trim() === '') {
@@ -41,20 +60,32 @@ class Connection {
             });
         });
     }
-    executeQuery(connection, sql, params) {
-        return new Promise((resolve, reject) => {
-            connection.query(sql, params, (err, result) => {
-                connection.release();
-                if (err) {
-                    return reject(err);
-                }
-                resolve(result);
-            });
-        });
-    }
     query(sql, params) {
         return __awaiter(this, void 0, void 0, function* () {
-            return this.executeQuery(yield this.getPoolConnection(), sql, params);
+            return new ConnectionWrapper(yield this.getPoolConnection(), true).query(sql, params);
+        });
+    }
+    runInTransaction(callback) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const connection = yield this.getPoolConnection();
+            const wrapper = new ConnectionWrapper(connection, false);
+            let transactionStarted = false;
+            try {
+                yield wrapper.query('START TRANSACTION;');
+                transactionStarted = true;
+                const result = yield Promise.resolve(callback(wrapper));
+                yield wrapper.query('COMMIT;');
+                return result;
+            }
+            catch (e) {
+                if (transactionStarted) {
+                    yield wrapper.query('ROLLBACK;');
+                }
+                throw e;
+            }
+            finally {
+                connection.release();
+            }
         });
     }
 }

@@ -334,6 +334,28 @@ new MysqlConnection({
 
 With this you have access to a `query` function, which allows you to execute SQL queries on the configured server.
 
+You can also use the `runInTransaction()` method to execute many SQL statements within a MySQL transaction, for example:
+
+```typescript
+import { MysqlConnection } from '@ssense/framework';
+
+// Create connection
+const connection = new MysqlConnection({... params});
+
+// Run multiple MySQL commands inside a managed transaction
+const result = await connection.runInTransaction(async (transaction) => {
+    const users = await transaction.query('SELECT * FROM USERS');
+    if (users.length > 0) {
+        await transaction.query('UPDATE users set name=.....');
+    }
+    
+    return users[0];
+});
+
+// result will be the object returned by the runInTransaction() method, here users[0]
+// All the MySQL transaction commands (BEGIN, COMMIT or ROLLBACK) are automatically performed, so you just have to focus on your business case.
+```
+
 For more information please check the code for specific implementation details.
 
 ## Promise Pool
