@@ -23,8 +23,9 @@ import { Cache } from './cache/Cache';
 import { Redis as RedisConnection, ConnectionOptions as RedisConnectionOptions } from './cache/Redis';
 
 // MySQL
-import { Connection as MysqlConnection, ConnectionOptions as MysqlConnectionOptions, TransactionFunction as MysqlTransactionFunction }
-    from './mysql/Connection';
+import { Connection as MysqlConnection, ConnectionOptions as MysqlConnectionOptions, TransactionFunction as MysqlTransactionFunction,
+    LockTableOption as MysqlLockTableOption
+} from './mysql/Connection';
 
 // Pubsub
 import { Emitter as PubsubEmitter, EmitterOptions as PubsubEmitterOptions } from './pubsub/Emitter';
@@ -52,7 +53,7 @@ export {
     // Cache / Redis
     Cache, RedisConnection, RedisConnectionOptions,
     // MySQL
-    MysqlConnection, MysqlConnectionOptions, MysqlTransactionFunction,
+    MysqlConnection, MysqlConnectionOptions, MysqlTransactionFunction, MysqlLockTableOption,
     // Pubsub
     PubsubEmitter, PubsubEmitterOptions, PubsubParser, PubsubMessage,
     // Exceptions

@@ -736,6 +736,17 @@ export interface MysqlTransactionFunction {
     (transaction: {query: (sql: string, params?: any[]) => Promise<any>}): Promise<any>;
 }
 
+export interface MysqlLockTableOption {
+    /**
+     * Name of the table to lock
+     */
+    name: string;
+    /**
+     * Lock mode to use, must be one of 'READ' or 'WRITE'
+     */
+    mode: 'READ'|'WRITE';
+}
+
 export class MysqlConnection {
     constructor(options?: MysqlConnectionOptions);
 
@@ -745,12 +756,19 @@ export class MysqlConnection {
      * @param params SQL query params for a query with parameters (will be protected against SQL injections)
      */
     public query(sql: string, params?: any[]): Promise<any>;
-
     /**
      * Execute a list of statements in a MySQL transactional way, managing the transaction (begin, commit, rollback) automatically
      * @param callback Function in which all the MySQL statements can be executed (will be run in a MySQL transaction)
      */
     public runInTransaction(callback: MysqlTransactionFunction): Promise<any>;
+
+    /**
+     * Same as runInTransaction() method, except it explicitly locks tables before running transaction (calling LOCK TABLES ... instead of START TRANSACTION)
+     * Commit or rollback events are managed automatically
+     * @param locks Array of MysqlLockTableOption (tables to lock with lock mode)
+     * @param callback Function in which all the MySQL statements can be executed (will be run in a MySQL transaction)
+     */
+    public runWithLockTables(locks: MysqlLockTableOption[], callback: MysqlTransactionFunction): Promise<any>;
 }
 
 //////////////////

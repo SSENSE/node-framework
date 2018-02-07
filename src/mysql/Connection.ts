@@ -14,6 +14,11 @@ export interface TransactionFunction {
     (transaction: {query: (sql: string, params?: any[]) => Promise<any>}): Promise<any>;
 }
 
+export interface LockTableOption {
+    name: string;
+    mode: 'READ'|'WRITE';
+}
+
 class ConnectionWrapper {
     constructor(private connection: PoolConnection, private releaseConnection: boolean) {}
 
@@ -98,6 +103,48 @@ export class Connection {
             }
             throw e;
         } finally {
+            connection.release();
+        }
+    }
+
+    public async runWithLockTables(locks: LockTableOption[], callback: TransactionFunction): Promise<any> {
+        if (!Array.isArray(locks) || locks.length === 0) {
+            throw new Error('locks must be a MysqlLockTableOption[]');
+        }
+
+        // Get connection from pool
+        const connection = await this.getPoolConnection();
+        // Get connection wrapper
+        const wrapper = new ConnectionWrapper(connection, false);
+
+        let transactionStarted = false;
+        let tablesLocked = false;
+
+        try {
+
+            // Start transaction
+            await wrapper.query('SET autocommit=0;');
+            transactionStarted = true;
+
+            await wrapper.query(`LOCK TABLES ${locks.map(l => `${l.name} ${l.mode}`).join(', ')};`);
+            tablesLocked = true;
+
+            // Execute user callback
+            const result = await Promise.resolve(callback(wrapper));
+
+            // Commit transaction
+            await wrapper.query('COMMIT;');
+
+            return result;
+        } catch (e) {
+            if (transactionStarted) {
+                await wrapper.query('ROLLBACK;');
+            }
+            throw e;
+        } finally {
+            if (tablesLocked) {
+                await wrapper.query('UNLOCK TABLES;');
+            }
             connection.release();
         }
     }

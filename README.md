@@ -356,6 +356,9 @@ const result = await connection.runInTransaction(async (transaction) => {
 // All the MySQL transaction commands (BEGIN, COMMIT or ROLLBACK) are automatically performed, so you just have to focus on your business case.
 ```
 
+If you need to lock tables before starting a transaction, you can use the `runWithLockTables()` method which will work the same way as `runInTransaction()`, except the tables will be explicitly locked (using LOCK TABLES ... instead of START TRANSACTION).
+As for `runInTransaction()`, the commit or rollback are automatically handled, as well as the `UNLOCK TABLES` method.
+
 For more information please check the code for specific implementation details.
 
 ## Promise Pool

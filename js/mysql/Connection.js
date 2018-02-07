@@ -88,6 +88,38 @@ class Connection {
             }
         });
     }
+    runWithLockTables(locks, callback) {
+        return __awaiter(this, void 0, void 0, function* () {
+            if (!Array.isArray(locks) || locks.length === 0) {
+                throw new Error('locks must be a MysqlLockTableOption[]');
+            }
+            const connection = yield this.getPoolConnection();
+            const wrapper = new ConnectionWrapper(connection, false);
+            let transactionStarted = false;
+            let tablesLocked = false;
+            try {
+                yield wrapper.query('SET autocommit=0;');
+                transactionStarted = true;
+                yield wrapper.query(`LOCK TABLES ${locks.map(l => `${l.name} ${l.mode}`).join(', ')};`);
+                tablesLocked = true;
+                const result = yield Promise.resolve(callback(wrapper));
+                yield wrapper.query('COMMIT;');
+                return result;
+            }
+            catch (e) {
+                if (transactionStarted) {
+                    yield wrapper.query('ROLLBACK;');
+                }
+                throw e;
+            }
+            finally {
+                if (tablesLocked) {
+                    yield wrapper.query('UNLOCK TABLES;');
+                }
+                connection.release();
+            }
+        });
+    }
 }
 exports.Connection = Connection;
 //# sourceMappingURL=Connection.js.map
