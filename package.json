@@ -1,6 +1,6 @@
 {
   "name": "@ssense/framework",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "description": "Base framework regrouping all SSENSE's utilities for Node.js developers",
   "main": "./js",
   "typings": "index.d.ts",
