@@ -7,6 +7,9 @@ Base framework grouping all SSENSE's utilities for Node.js developers
 [![Latest Stable Version](https://img.shields.io/npm/v/@ssense/framework.svg)](https://www.npmjs.com/package/@ssense/framework)
 [![npm Downloads](https://img.shields.io/npm/dm/@ssense/framework.svg)](https://www.npmjs.com/package/@ssense/framework)
 
+## :warning: :hand: :exclamation: This repository is no longer maintained
+For pull requests, issues, comments... please see **[here](https://github.com/Groupe-Atallah/node-framework)**.
+
 ## Installation
 
 Download as a dependency using [npm](https://www.npmjs.com/).
